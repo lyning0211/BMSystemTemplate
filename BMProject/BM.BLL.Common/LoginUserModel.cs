@@ -5,9 +5,11 @@ namespace BM.BLL.Common
     public class LoginUserModel
     {
         //用户信息
+        public int UserID { get; set; }
         public string UserGUID { get; set; }
         public string UserName { get; set; }
         public string UserSex { get; set; }
+        public int UserRoleID { get; set; }
         public string UserRoleGUID { get; set; }
         public string UserRoleName { get; set; }
         public string LoginIP { get; set; }

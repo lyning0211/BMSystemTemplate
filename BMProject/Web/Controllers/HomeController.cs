@@ -166,11 +166,13 @@ namespace Web.Controllers
                     string companyName = SystemManageDAL.GetParameterValueByName("company_name");//公司名称
                     LoginUserModel pUserMapInfo = new LoginUserModel
                     {
+                        UserID = dtUser.Rows[0]["UserID"].ToInt(),
                         UserGUID = dtUser.Rows[0]["UserGUID"].ToString(),
                         UserName = dtUser.Rows[0]["UserName"].ToString(),
                         UserSex = dtUser.Rows[0]["UserSex"].ToString(),
+                        UserRoleID = dtUser.Rows[0]["UserRoleID"].ToInt(),
                         UserRoleGUID = dtUser.Rows[0]["UserRoleGUID"].ToString(),
-                        UserRoleName = ProjectInfoDAL.GetRoleNameByID(dtUser.Rows[0]["UserRoleGUID"].ToString()),
+                        UserRoleName = ProjectInfoDAL.GetRoleNameByGUID(dtUser.Rows[0]["UserRoleGUID"].ToString()),
                         LoginIP = ip,
                         LoginTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         ProjectName = projectName,
@@ -180,9 +182,9 @@ namespace Web.Controllers
 
                     #region 添加登录日志
                     Dictionary<string, string> logDict = new Dictionary<string, string>();
-                    logDict.Add("UserGUID", dtUser.Rows[0]["UserGUID"].ToString());
+                    logDict.Add("UserID", dtUser.Rows[0]["UserID"].ToString());
                     logDict.Add("UserName", dtUser.Rows[0]["UserName"].ToString());
-                    logDict.Add("UserRoleGUID", dtUser.Rows[0]["UserRoleGUID"].ToString());
+                    logDict.Add("UserRoleID", dtUser.Rows[0]["UserRoleID"].ToString());
                     logDict.Add("UserRoleName", dtUser.Rows[0]["RoleName"].ToString());
                     logDict.Add("Operation_IP", ip);
                     logDict.Add("Operation_Note", "后台登录");
@@ -223,7 +225,7 @@ namespace Web.Controllers
                 {
                     foreach (DataRow dr in dtRoles.Rows)
                     {
-                        sbHtml.AppendFormat("<option value=\"{0}\">{1}</option>", dr["RoleGUID"], dr["RoleName"]);
+                        sbHtml.AppendFormat("<option value=\"{0}\">{1}</option>", dr["RoleID"], dr["RoleName"]);
                     }
                 }
 
@@ -257,7 +259,7 @@ namespace Web.Controllers
                 pDict.Add("UserPassWordMD5", passWord);
 
                 //保存数据
-                string result = ProjectInfoDAL.SaveUserInfoData(pDict);
+                string result = ProjectInfoDAL.RegisterUserInfoData(pDict);
                 if (result == "")
                 {
                     message.Success = true;

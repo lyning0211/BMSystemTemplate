@@ -1,4 +1,5 @@
 ﻿using BM.BLL.Common;
+using BM.BLL.Common.Common;
 using BM.DAL.Helper;
 using System;
 using System.Collections.Generic;
@@ -37,11 +38,11 @@ namespace BM.DAL
         }
 
         /// <summary>
-        /// 根据ID获取角色名称
+        /// 根据GUID获取角色名称
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static string GetRoleNameByID(string guid)
+        public static string GetRoleNameByGUID(string guid)
         {
             string strRes = "";
             try
@@ -58,11 +59,11 @@ namespace BM.DAL
         }
 
         /// <summary>
-        /// 根据ID获取角色类型
+        /// 根据GUID获取角色类型
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static string GetRoleTypeByID(string guid)
+        public static string GetRoleTypeByGUID(string guid)
         {
             string strRes = "";
             try
@@ -102,7 +103,7 @@ namespace BM.DAL
 
                     string newGUID = Guid.NewGuid().ToString();
                     //写入痕迹日志
-                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + newGUID + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加角色信息');");
+                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + newGUID + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加角色信息');");
 
                     //添加数据
                     sqlStr.AppendFormat("INSERT INTO dbo.SA_Role (RoleGUID,RoleName,RoleType,RoleNote,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','other',N'" + dictData["RoleNote"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
@@ -129,7 +130,7 @@ namespace BM.DAL
                         if (new_value != old_value)
                         {
                             //写入痕迹日志
-                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + dictData["RoleGUID"] + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改角色信息');");
+                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + dictData["RoleGUID"] + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改角色信息');");
                         }
                     }
                     //修改数据
@@ -156,9 +157,9 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                string roleName = GetRoleNameByID(id);
+                string roleName = GetRoleNameByGUID(id);
                 //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + id + "','" + roleName + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除角色信息');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + id + "','" + roleName + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除角色信息');");
 
                 //执行删除语句
                 sqlStr.AppendFormat(@"DELETE dbo.SA_Role WHERE RoleGUID='{0}';", id);
@@ -238,7 +239,7 @@ namespace BM.DAL
             DataTable dt = new DataTable();
             try
             {
-                string sqlStr = CommonDAL.GetPagingSQL(pageIndex, pageSize, "SA_User_v", fieldName, "UserGUID", myWhere, myOrderBy);
+                string sqlStr = CommonDAL.GetPagingSQL(pageIndex, pageSize, "SA_User_v", fieldName, "UserID", myWhere, myOrderBy);
                 dt = DBHelper.GetDataTable(sqlStr);
             }
             catch (Exception ex)
@@ -250,11 +251,11 @@ namespace BM.DAL
         }
 
         /// <summary>
-        /// 根据ID获取用户名称
+        /// 根据GUID获取用户名称
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static string GetUserNameByID(string guid)
+        public static string GetUserNameByGUID(string guid)
         {
             string strRes = "";
             try
@@ -283,7 +284,7 @@ namespace BM.DAL
             {
                 string mydate = DBHelper.ReadCurrDate();
                 //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + dictData["UserGUID"] + "',N'" + pUserMapInfo.UserName + "','UserPassWord','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update password','" + pUserMapInfo.LoginIP + "','修改密码');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + dictData["UserGUID"] + "',N'" + pUserMapInfo.UserName + "','UserPassWord','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update password','" + pUserMapInfo.LoginIP + "','修改密码');");
 
                 //修改密码
                 sqlStr.AppendFormat("UPDATE dbo.SA_User SET UserPassWord=N'" + dictData["UserPassWordMD5"].ToString().Trim().Replace("'", "''") + "' WHERE UserGUID='" + dictData["UserGUID"] + "';");
@@ -302,7 +303,7 @@ namespace BM.DAL
         /// </summary>
         /// <param name="dictData"></param>
         /// <returns></returns>
-        public static string SaveUserInfoData(Dictionary<string, object> dictData)
+        public static string RegisterUserInfoData(Dictionary<string, object> dictData)
         {
             string strRes = "";
             StringBuilder sqlStr = new StringBuilder();
@@ -317,11 +318,12 @@ namespace BM.DAL
                 }
 
                 string newGUID = Guid.NewGuid().ToString();
-                //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','','','','/','/','/','/','" + mydate + "','register','" + dictData["Operation_IP"] + "','注册账号');");
-
                 //添加数据
-                sqlStr.AppendFormat("INSERT INTO dbo.SA_User (UserGUID,UserName,UserPassWord,UserStatus,UserSex,UserRoleGUID,Phone,Email,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','" + dictData["UserPassWordMD5"] + "','" + dictData["UserStatus"] + "','" + dictData["UserSex"] + "','" + dictData["UserRoleGUID"] + "','" + dictData["Phone"] + "','" + dictData["Email"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
+                sqlStr.AppendFormat("INSERT INTO dbo.SA_User (UserGUID,UserName,UserPassWord,UserStatus,UserSex,UserRoleID,Phone,Email,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','" + dictData["UserPassWordMD5"] + "','" + dictData["UserStatus"] + "','" + dictData["UserSex"] + "','" + dictData["UserRoleID"] + "','" + dictData["Phone"] + "','" + dictData["Email"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
+
+                //写入痕迹日志
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) SELECT 'user',UserGUID,UserName,'','','',UserID,UserName,UserRoleID,(SELECT RoleName FROM dbo.SA_Role WHERE RoleID='" + dictData["UserRoleID"] + "'),'" + mydate + "','register','" + dictData["Operation_IP"] + "','注册账号' FROM dbo.SA_User WHERE UserGUID='{0}';", newGUID);
+
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
             catch (Exception ex)
@@ -355,10 +357,10 @@ namespace BM.DAL
 
                     string newGUID = Guid.NewGuid().ToString();
                     //写入痕迹日志
-                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加账号信息');");
+                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加账号信息');");
 
                     //添加数据
-                    sqlStr.AppendFormat("INSERT INTO dbo.SA_User (UserGUID,UserName,UserPassWord,UserStatus,UserSex,UserRoleGUID,Phone,Email,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','E10ADC3949BA59ABBE56E057F20F883E','" + dictData["UserStatus"] + "','" + dictData["UserSex"] + "','" + dictData["UserRoleGUID"] + "','" + dictData["Phone"] + "','" + dictData["Email"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
+                    sqlStr.AppendFormat("INSERT INTO dbo.SA_User (UserGUID,UserName,UserPassWord,UserStatus,UserSex,UserRoleID,Phone,Email,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','E10ADC3949BA59ABBE56E057F20F883E','" + dictData["UserStatus"] + "','" + dictData["UserSex"] + "','" + dictData["UserRoleID"] + "','" + dictData["Phone"] + "','" + dictData["Email"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
                 }
                 else
                 {
@@ -382,11 +384,11 @@ namespace BM.DAL
                         if (new_value != old_value)
                         {
                             //写入痕迹日志
-                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + dictData["UserGUID"] + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改账号信息');");
+                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + dictData["UserGUID"] + "',N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改账号信息');");
                         }
                     }
                     //修改数据
-                    sqlStr.AppendFormat("UPDATE dbo.SA_User SET UserName=N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "',UserStatus='" + dictData["UserStatus"] + "',UserSex='" + dictData["UserSex"] + "',UserRoleGUID='" + dictData["UserRoleGUID"] + "',Phone='" + dictData["Phone"] + "',Email='" + dictData["Email"].ToString().Trim().Replace("'", "''") + "' WHERE UserGUID='" + dictData["UserGUID"] + "';");
+                    sqlStr.AppendFormat("UPDATE dbo.SA_User SET UserName=N'" + dictData["UserName"].ToString().Trim().Replace("'", "''") + "',UserStatus='" + dictData["UserStatus"] + "',UserSex='" + dictData["UserSex"] + "',UserRoleID='" + dictData["UserRoleID"] + "',Phone='" + dictData["Phone"] + "',Email='" + dictData["Email"].ToString().Trim().Replace("'", "''") + "' WHERE UserGUID='" + dictData["UserGUID"] + "';");
                 }
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
@@ -409,9 +411,9 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                string userName = GetUserNameByID(userGUID);
+                string userName = GetUserNameByGUID(userGUID);
                 //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + userGUID + "','" + userName + "','UserPassWord','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','reset password','" + pUserMapInfo.LoginIP + "','重置密码');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + userGUID + "','" + userName + "','UserPassWord','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','reset password','" + pUserMapInfo.LoginIP + "','重置密码');");
 
                 //修改数据(E10ADC3949BA59ABBE56E057F20F883E  123456)
                 sqlStr.AppendFormat("UPDATE dbo.SA_User SET UserPassWord=N'E10ADC3949BA59ABBE56E057F20F883E' WHERE UserGUID='" + userGUID + "';");
@@ -437,9 +439,9 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                string userName = GetUserNameByID(id);
+                string userName = GetUserNameByGUID(id);
                 //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + id + "','" + userName + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除账号信息');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('user','" + id + "','" + userName + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除账号信息');");
 
                 //执行删除语句
                 sqlStr.AppendFormat(@"DELETE dbo.SA_User WHERE UserGUID='{0}';", id);
@@ -490,7 +492,7 @@ namespace BM.DAL
             DataTable dt = new DataTable();
             try
             {
-                string roleType = GetRoleTypeByID(roleGUID);
+                string roleType = GetRoleTypeByGUID(roleGUID);
                 if (roleType == "sa")//超级管理员
                 {
                     sql = @"SELECT * FROM dbo.SA_Module
@@ -530,7 +532,7 @@ namespace BM.DAL
             DataTable dt = new DataTable();
             try
             {
-                string roleType = GetRoleTypeByID(roleGUID);
+                string roleType = GetRoleTypeByGUID(roleGUID);
                 if (roleType == "sa")//超级管理员
                 {
                     sql = @"SELECT * FROM dbo.SA_Module
@@ -620,7 +622,7 @@ namespace BM.DAL
             StringBuilder sqlStr = new StringBuilder();
             try
             {
-                string roleName = GetRoleNameByID(dictData["RoleGUID"].ToString());
+                string roleName = GetRoleNameByGUID(dictData["RoleGUID"].ToString());
                 //角色权限菜单ID
                 string idList = dictData["idList"].ToString();
 
@@ -646,7 +648,7 @@ namespace BM.DAL
 
                 //写入痕迹日志
                 string mydate = DBHelper.ReadCurrDate();
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + dictData["RoleGUID"] + "','" + roleName + "','rolepermission','','" + idList + "','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','rolepermission','" + pUserMapInfo.LoginIP + "','设置角色菜单权限');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + dictData["RoleGUID"] + "','" + roleName + "','rolepermission','','" + idList + "','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','rolepermission','" + pUserMapInfo.LoginIP + "','设置角色菜单权限');");
 
                 //先删除
                 sqlStr.AppendFormat(@"DELETE dbo.SA_RolePermission WHERE RoleGUID='{0}';", dictData["RoleGUID"]);
@@ -696,11 +698,11 @@ namespace BM.DAL
         }
 
         /// <summary>
-        /// 根据ID获取部门名称
+        /// 根据GUID获取部门名称
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static string GetDepartmentNameByID(string guid)
+        public static string GetDepartmentNameByGUID(string guid)
         {
             string strRes = "";
             try
@@ -740,7 +742,7 @@ namespace BM.DAL
 
                     string newGUID = Guid.NewGuid().ToString();
                     //写入痕迹日志
-                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + newGUID + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加部门信息');");
+                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + newGUID + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加部门信息');");
 
                     //添加数据
                     sqlStr.AppendFormat("INSERT INTO dbo.SA_Department (DepartmentGUID,DepartmentName,DepartmentNote,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["DepartmentNote"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
@@ -767,7 +769,7 @@ namespace BM.DAL
                         if (new_value != old_value)
                         {
                             //写入痕迹日志
-                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + dictData["DepartmentGUID"] + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改部门信息');");
+                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + dictData["DepartmentGUID"] + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改部门信息');");
                         }
                     }
                     //修改数据
@@ -794,9 +796,9 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                string departmentName = GetDepartmentNameByID(id);
+                string departmentName = GetDepartmentNameByGUID(id);
                 //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + id + "','" + departmentName + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除部门信息');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + id + "','" + departmentName + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除部门信息');");
 
                 //执行删除语句
                 sqlStr.AppendFormat(@"DELETE dbo.SA_Department WHERE DepartmentGUID='{0}';", id);

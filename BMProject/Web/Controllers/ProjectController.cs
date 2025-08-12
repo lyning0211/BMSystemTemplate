@@ -38,7 +38,7 @@ namespace Web.Controllers
             string roleName = "";
             if (!string.IsNullOrEmpty(roleGUID))
             {
-                //根据ID查询角色信息
+                //根据GUID查询角色信息
                 string myWhere = "RoleGUID='" + roleGUID + "'";
                 DataTable dt = ProjectInfoDAL.GetRoleTable(myWhere, "");
                 if (dt != null && dt.Rows.Count > 0)
@@ -577,7 +577,7 @@ namespace Web.Controllers
                 {
                     foreach (DataRow dr in dtRoles.Rows)
                     {
-                        sbHtml.AppendFormat("<option value=\"{0}\">{1}</option>", dr["RoleGUID"], dr["RoleName"]);
+                        sbHtml.AppendFormat("<option value=\"{0}\">{1}</option>", dr["RoleID"], dr["RoleName"]);
                     }
                 }
 
@@ -626,7 +626,7 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 保存用户数据
+        /// 保存账号数据
         /// </summary>
         /// <param name="jsonData"></param>
         /// <returns></returns>

@@ -82,7 +82,7 @@ namespace BM.DAL
                     }
 
                     //写入痕迹日志
-                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加参数配置信息');");
+                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加参数配置信息');");
 
                     //添加数据
                     sqlStr.AppendFormat("INSERT INTO dbo.SA_Parameter (ParameterName,ParameterValue,ParameterNote,IsDisplay,Create_Time) VALUES (N'" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["ParameterValue"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["ParameterNote"].ToString().Trim().Replace("'", "''") + "','Y',GETDATE());");
@@ -100,7 +100,7 @@ namespace BM.DAL
                         if (new_value != old_value)
                         {
                             //写入痕迹日志
-                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改参数配置信息');");
+                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改参数配置信息');");
                         }
                     }
                     //修改数据
@@ -128,7 +128,7 @@ namespace BM.DAL
             {
                 string mydate = DBHelper.ReadCurrDate();
                 //写入痕迹日志
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + id + "','" + id + "','','','','" + pUserMapInfo.UserGUID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleGUID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除参数配置信息');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + id + "','" + id + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除参数配置信息');");
 
                 //执行删除语句
                 sqlStr.AppendFormat(@"DELETE dbo.SA_Parameter WHERE ParameterName='{0}';", id);

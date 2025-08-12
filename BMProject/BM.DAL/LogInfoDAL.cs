@@ -140,7 +140,7 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Login (UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_IP,Operation_Note) VALUES ('" + dictData["UserGUID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleGUID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + mydate + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Login (UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_IP,Operation_Note) VALUES ('" + dictData["UserID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + mydate + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');");
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
             catch (Exception ex)
@@ -162,7 +162,7 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Operation (Object_Name,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES ('" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["UserGUID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleGUID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + mydate + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Operation (Object_Name,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES ('" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["UserID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + mydate + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');");
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
             catch (Exception ex)
@@ -181,15 +181,15 @@ namespace BM.DAL
         {
             return @"INSERT INTO dbo.Log_Operation(
                                 Object_Name,
-                                UserGUID,
+                                UserID,
                                 UserName,
-                                UserRoleGUID,
+                                UserRoleID,
                                 UserRoleName,
                                 Operation_Time,
                                 Operation_Type,
                                 Operation_IP,
                                 Operation_Note)
-                    VALUES ('" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["UserGUID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleGUID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + dictData["mydate"].ToString().Trim() + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');";
+                    VALUES ('" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["UserID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + dictData["mydate"].ToString().Trim() + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');";
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace BM.DAL
             try
             {
                 string mydate = DBHelper.ReadCurrDate();
-                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserGUID,UserName,UserRoleGUID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES ('" + dictData["Object_Type"].ToString().Trim() + "','" + dictData["Object_GUID"].ToString().Trim() + "','" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["Object_Field"].ToString().Trim() + "',N'" + dictData["Old_Value"].ToString().Trim() + "',N'" + dictData["New_Value"].ToString().Trim() + "','" + dictData["UserGUID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleGUID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + mydate + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');");
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES ('" + dictData["Object_Type"].ToString().Trim() + "','" + dictData["Object_GUID"].ToString().Trim() + "','" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["Object_Field"].ToString().Trim() + "',N'" + dictData["Old_Value"].ToString().Trim() + "',N'" + dictData["New_Value"].ToString().Trim() + "','" + dictData["UserID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + mydate + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');");
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
             catch (Exception ex)
@@ -228,15 +228,15 @@ namespace BM.DAL
                                 Object_Field,
                                 Old_Value,
                                 New_Value,
-                                UserGUID,
+                                UserID,
                                 UserName,
-                                UserRoleGUID,
+                                UserRoleID,
                                 UserRoleName,
                                 Operation_Time,
                                 Operation_Type,
                                 Operation_IP,
                                 Operation_Note) 
-                     VALUES ('" + dictData["Object_Type"].ToString().Trim() + "','" + dictData["Object_GUID"].ToString().Trim() + "','" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["Object_Field"].ToString().Trim() + "',N'" + dictData["Old_Value"].ToString().Trim() + "',N'" + dictData["New_Value"].ToString().Trim() + "','" + dictData["UserGUID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleGUID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + dictData["mydate"].ToString().Trim() + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');";
+                     VALUES ('" + dictData["Object_Type"].ToString().Trim() + "','" + dictData["Object_GUID"].ToString().Trim() + "','" + dictData["Object_Name"].ToString().Trim() + "','" + dictData["Object_Field"].ToString().Trim() + "',N'" + dictData["Old_Value"].ToString().Trim() + "',N'" + dictData["New_Value"].ToString().Trim() + "','" + dictData["UserID"].ToString().Trim() + "','" + dictData["UserName"].ToString().Trim() + "','" + dictData["UserRoleID"].ToString().Trim() + "','" + dictData["UserRoleName"].ToString().Trim() + "','" + dictData["mydate"].ToString().Trim() + "','" + dictData["Operation_Type"].ToString().Trim() + "','" + dictData["Operation_IP"].ToString().Trim() + "',N'" + dictData["Operation_Note"].ToString().Trim() + "');";
         }
     }
 }
