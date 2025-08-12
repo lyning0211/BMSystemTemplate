@@ -1,0 +1,136 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="~/Content/h-ui/lib/html5shiv.js"></script>
+    <script type="text/javascript" src="~/Content/h-ui/lib/respond.min.js"></script>
+    <![endif]-->
+    <link href="~/Content/h-ui/static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/h-ui/static/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/h-ui/static/h-ui.admin/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/h-ui/lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="~/Content/h-ui/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title>后台登录</title>
+</head>
+<body>
+    <div class="header"></div>
+    <div class="loginWraper">
+        <div id="loginform" class="loginBox">
+            <form id="form1" class="form form-horizontal" method="post">
+                <div class="row cl">
+                    <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+                    <div class="formControls col-xs-8">
+                        <input id="UserName" name="UserName" type="text" placeholder="输入用户名" class="input-text size-L" maxlength="100" />
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+                    <div class="formControls col-xs-8">
+                        <input id="UserPWD" name="UserPWD" type="password" placeholder="输入密码" class="input-text size-L" maxlength="16" onkeyup="value=value.replace(/[\W]/g,'') " onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" />
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="formControls col-xs-8 col-xs-offset-3">
+                        <input id="VCode" name="VCode" class="input-text size-L" type="text" placeholder="输入验证码" style="width:235px;" maxlength="5" onkeyup="value=value.replace(/[\W]/g,'') " onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" />
+                        <img style="border: 1px solid #d6cbcb;width:120px;height: 35px;cursor: pointer;" src="/Home/CreateVerifyCodeData" id="VerifyCode" alt="验证码获取失败" title="点击刷新" />
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="formControls col-xs-8 col-xs-offset-3">
+                        <input type="button" value="登 录" onclick="Login()" class="btn btn-success radius size-L">
+                        &nbsp;&nbsp;
+                        <a style="color:blue;" href="javascript:;" onclick="toRegisterUser('注册账号', '/Home/RegisterUserInfo', '500', '410')"><u>注册</u></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="footer">©Copyright @ViewBag.ProjectName @ViewBag.Year</div>
+</body>
+</html>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="~/Content/h-ui/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/static/h-ui.admin/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+@*<script type="text/javascript" src="~/Content/h-ui/lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Content/h-ui/static/h-ui/js/H-ui.min.js"></script>
+    <script src="~/Content/layui-v2.5.5/layui.js"></script>
+    <script src="~/Content/layui-v2.5.5/layui.all.js"></script>*@
+<script src="~/Content/js/jquery-ui.bm.js"></script>
+<script>
+    //使用Enter键便捷登录
+    $(document).keydown(function (event) { if (event.keyCode === 13) { Login() } });
+
+    //点击刷新（局部）验证码
+    $("#VerifyCode").click(function (e) {
+        //TODO:这里，可在客户端作一个简单过滤，防止客户端恶意请求服务器。当然，最好的操作方式是在服务器端也做这个操作
+        document.getElementById("VerifyCode").src = "/Home/CreateVerifyCodeData/" + Math.floor(Math.random() * 10000);
+    });
+
+    /*登录-测试用*/
+    //function Login() {
+    //    window.location = "/Home/Index";
+    //}
+
+    //用户提交登录
+    function Login() {
+        var userName = $("#UserName").val();
+        var userPwd = $("#UserPWD").val();
+        var vCode = $("#VCode").val();
+        if (userName.trim() == "") {
+            layer.alert('请输入用户名', { icon: 2 })
+            return false;
+        }
+        if (userPwd.trim() == "") {
+            layer.alert('请输入用户密码', { icon: 2 })
+            return false;
+        }
+        //if (vCode.trim() == "") {
+        //    layer.alert('请输入验证码', { icon: 2 })
+        //    return false;
+        //}
+        var ele = getAllDataByName("form1");
+        $.ajax({
+            type: "POST",
+            url: "/Home/UserLoginData",
+            contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+            data: { jsonData: JSON.stringify(ele) },
+            dataType: "json",
+            success: function (data) {
+                if (data.Success == true) {
+                    //登录成功
+                    layer.msg(data.ReturnString, { icon: 1 });
+                    //1秒后跳转
+                    setTimeout(function () { window.location = "/Home/Index"; }, 1000);
+                }
+                else {
+                    //自动刷新验证码
+                    document.getElementById("VerifyCode").src = "/Home/CreateVerifyCodeData/" + Math.floor(Math.random() * 10000);
+                    //登录失败
+                    layer.alert(data.ReturnString, { icon: 2 })
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
+
+    //注册账号
+    function toRegisterUser(title, url, w, h) {
+        layer_show(title, url, w, h);
+    }
+</script>

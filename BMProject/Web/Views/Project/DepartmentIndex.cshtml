@@ -1,0 +1,203 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="~/Content/h-ui/lib/html5shiv.js"></script>
+    <script type="text/javascript" src="~/Content/h-ui/lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="~/Content/h-ui/static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/h-ui/static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/h-ui/lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/h-ui/static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="~/Content/h-ui/static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="~/Content/h-ui/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title></title>
+</head>
+<body>
+    <nav class="breadcrumb">
+        <i class="Hui-iconfont">&#xe67f;</i> 首页
+        <span class="c-gray en">&gt;</span> 项目基础信息
+        <span class="c-gray en">&gt;</span> 部门管理
+        <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新">
+            <i class="Hui-iconfont">&#xe68f;</i>
+        </a>
+    </nav>
+    <div class="page-container">
+        <div class="text-c">
+            <select class="sel_select" id="ddlQuery">
+                <option value="DepartmentName" selected>部门名称</option>
+            </select>
+            <input type="text" class="input-text" id="txtQuery" style="width:250px">
+            <button type="button" onclick="loadView()" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i>搜索</button>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-10">
+            <span class="l">
+                <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+                <a class="btn btn-primary radius" href="/Project/DepartmentInfo?DepartmentGUID="><i class="Hui-iconfont">&#xe600;</i> 添加</a>
+                <a class="btn btn-secondary radius" href="javascript:;" onclick="toLogView()"><i class="Hui-iconfont">&#xe623;</i> 查看日志</a>
+            </span>
+            <span class="r">共有数据：<strong><span id="ListCount"></span></strong> 条</span>
+        </div>
+        <div class="mt-10">
+            <table class="table table-border table-bordered table-hover table-bg table-sort"></table>
+        </div>
+    </div>
+</body>
+</html>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="~/Content/h-ui/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="~/Content/h-ui/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="~/Content/h-ui/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $(function () {
+        loadView();
+        setTimeout(() => {
+            $('.table-sort').dataTable({
+                //"aaSorting": [[1, "desc"]],//默认第几个排序
+                "aaSorting": [],//默认第几个排序
+                "bStateSave": false,//状态保存
+                "aoColumnDefs": [
+                    { "orderable": false, "aTargets": [0, 3, 5] }// 制定列不参与排序
+                ]
+            });
+        }, 100);
+    });
+
+    //得到条件
+    function getstrWhere() {
+        var whereobj = new Object;
+        whereobj.queryname = $("#ddlQuery").val();
+        whereobj.queryvalue = $("#txtQuery").val();
+        return JSON.stringify(whereobj);
+    }
+
+    //加载数据
+    function loadView() {
+        var pageobj = {};
+        pageobj.currentwhere = getstrWhere();
+        $.ajax({
+            type: 'POST',
+            url: "/Project/GetDepartmentTableData",
+            contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+            data: { jsonData: JSON.stringify(pageobj) },
+            dataType: 'json',
+            success: function (data) {
+                if (data.Success == true) {
+                    $(".table").html(data.ReturnString);
+                    $("#ListCount").html(data.StrReturn);
+                }
+                else {
+                    $("#ListCount").html("0");
+                    //加载失败
+                    layer.alert(data.ReturnString, { icon: 2 })
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
+
+    //删除
+    function del_info(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: "/Project/DelDepartmentInfoData",
+                contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+                data: { id: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.Success == true) {
+                        //删除成功
+                        layer.msg(data.ReturnString, { icon: 1 });
+                        //1秒后跳转
+                        setTimeout(function () { window.location = "/Project/DepartmentIndex"; }, 1000);
+                    }
+                    else {
+                        //删除失败
+                        layer.alert(data.ReturnString, { icon: 2 })
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            });
+        });
+    }
+
+    //批量删除
+    function datadel() {
+        if ($('[name="selAllData"]:checked').length == 0) {
+            layer.msg("请选择要删除的项", { icon: 2 });
+            return false;
+        }
+
+        var idList = "";
+        $('[name="selAllData"]:checked').each(function (i) {
+            i == 0 ? idList += $(this).val() : idList += "," + $(this).val();
+        });
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: "/Project/DeleteDepartmentInfoData",
+                contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+                data: { idList: idList },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.Success == true) {
+                        //删除成功
+                        layer.msg(data.ReturnString, { icon: 1 });
+                        //1秒后跳转
+                        setTimeout(function () { window.location = "/Project/DepartmentIndex"; }, 1000);
+                    }
+                    else {
+                        //删除失败
+                        layer.alert(data.ReturnString, { icon: 2 })
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            });
+        });
+    }
+
+    //全选
+    function selAll(ele) {
+        if ($(ele).is(":checked")) {
+            $('[name="selAllData"]:visible').prop("checked", true);
+        }
+        else {
+            $('[name="selAllData"]:visible').prop("checked", false);
+        }
+    }
+
+    //查看日志
+    function toLogView() {
+        var title = "查看日志";
+        var url = "/LogManage/LogTraceIndex?Object_Type=department";
+        var width = $(window).width() - 50;
+        var height = $(window).height() - 40;
+        layer_show(title, url, width, height);
+    }
+</script>
