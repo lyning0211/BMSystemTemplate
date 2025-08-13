@@ -161,6 +161,15 @@ namespace Web.Controllers
                         return Json(message);
                     }
 
+                    DataTable dtRole = ProjectInfoDAL.GetRoleTable("RoleID='" + dtUser.Rows[0]["UserRoleID"].ToInt() + "'", "");
+                    if (dtRole.Rows.Count <= 0)
+                    {
+                        message.Success = false;
+                        message.ReturnString = "登录失败，此账号角色不存在！";
+
+                        return Json(message);
+                    }
+
                     //将登录信息写入Session
                     string projectName = SystemManageDAL.GetParameterValueByName("project_name");//系统名称
                     string companyName = SystemManageDAL.GetParameterValueByName("company_name");//公司名称
@@ -171,8 +180,8 @@ namespace Web.Controllers
                         UserName = dtUser.Rows[0]["UserName"].ToString(),
                         UserSex = dtUser.Rows[0]["UserSex"].ToString(),
                         UserRoleID = dtUser.Rows[0]["UserRoleID"].ToInt(),
-                        UserRoleGUID = dtUser.Rows[0]["UserRoleGUID"].ToString(),
-                        UserRoleName = ProjectInfoDAL.GetRoleNameByGUID(dtUser.Rows[0]["UserRoleGUID"].ToString()),
+                        UserRoleGUID = dtRole.Rows[0]["RoleGUID"].ToString(),
+                        UserRoleName = dtRole.Rows[0]["RoleName"].ToString(),
                         LoginIP = ip,
                         LoginTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         ProjectName = projectName,

@@ -56,8 +56,10 @@
     <Compile Include="Helper\DBHelper.cs" />
     <Compile Include="LogInfoDAL.cs" />
     <Compile Include="ProjectInfoDAL.cs" />
+    <Compile Include="StoreroomManageDAL.cs" />
     <Compile Include="SystemManageDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserManageDAL.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BM.BLL.Common\BM.BLL.Common.csproj">

@@ -61,7 +61,7 @@ namespace Web.Controllers
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "备注");//备注
                 sbHtml.Append("</tr></thead><tbody class=\"body\">");
 
-                string myWhere = BuildWhereLogTableData(pDict["currentwhere"].ToString());
+                string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Operation_Time DESC";
                 DataTable dt = LogInfoDAL.GetLogLoginTable(int.Parse(pDict["currentpageindex"].ToString()) - 1,
                                                         int.Parse(pDict["pagesize"].ToString()), "*", myWhere, orderBy);
@@ -106,7 +106,7 @@ namespace Web.Controllers
             StringBuilder sbHtml = new StringBuilder();
             try
             {
-                string myWhere = BuildWhereLogTableData(jsonWhere);
+                string myWhere = BuildWhereData(jsonWhere);
                 int recordCount = CommonDAL.GetRecordCount("Log_Login_v", myWhere);
 
                 message.Success = true;
@@ -138,8 +138,6 @@ namespace Web.Controllers
 
                 sbHtml.Append("<thead><tr class=\"text-c\">");
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "序号");//序号
-                sbHtml.AppendFormat("<th><span>{0}</span></th>", "一级菜单");//一级菜单
-                sbHtml.AppendFormat("<th><span>{0}</span></th>", "二级菜单");//二级菜单
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "操作对象");//操作对象
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "操作类型");//操作类型
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "用户名");//用户名
@@ -149,7 +147,7 @@ namespace Web.Controllers
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "备注");//备注
                 sbHtml.Append("</tr></thead><tbody class=\"body\">");
 
-                string myWhere = BuildWhereLogTableData(pDict["currentwhere"].ToString());
+                string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Operation_Time DESC";
                 DataTable dt = LogInfoDAL.GetLogOperationTable(pDict["currentpageindex"].ToString().ToInt() - 1, pDict["pagesize"].ToInt(), "*", myWhere, orderBy);
                 if (dt.Rows.Count == 0)
@@ -160,8 +158,6 @@ namespace Web.Controllers
                 {
                     sbHtml.Append("<tr class=\"text-c\">");
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", i + 1);
-                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["SysRsc_No"].ToString());
-                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["MenuRsc_No"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["Object_Name"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", cPublic.GetOperationTyp(dt.Rows[i]["Operation_Type"].ToString()));
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["UserName"].ToString());
@@ -197,7 +193,7 @@ namespace Web.Controllers
             StringBuilder sbHtml = new StringBuilder();
             try
             {
-                string myWhere = BuildWhereLogTableData(jsonWhere);
+                string myWhere = BuildWhereData(jsonWhere);
                 int recordCount = CommonDAL.GetRecordCount("Log_Operation_v", myWhere);
 
                 message.Success = true;
@@ -241,7 +237,7 @@ namespace Web.Controllers
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "备注");//备注
                 sbHtml.Append("</tr></thead><tbody class=\"body\">");
 
-                string myWhere = BuildWhereLogTableData(pDict["currentwhere"].ToString());
+                string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Operation_Time DESC";
                 DataTable dt = LogInfoDAL.GetLogTraceTable(pDict["currentpageindex"].ToString().ToInt() - 1, pDict["pagesize"].ToInt(), "*", myWhere, orderBy);
                 if (dt.Rows.Count == 0)
@@ -290,7 +286,7 @@ namespace Web.Controllers
             StringBuilder sbHtml = new StringBuilder();
             try
             {
-                string myWhere = BuildWhereLogTableData(jsonWhere);
+                string myWhere = BuildWhereData(jsonWhere);
                 int recordCount = CommonDAL.GetRecordCount("Log_Trace_v", myWhere);
 
                 message.Success = true;
@@ -310,7 +306,7 @@ namespace Web.Controllers
         /// <param name="jsonWhere"></param>
         /// <returns></returns>
         [FilterConfig]
-        private string BuildWhereLogTableData(string jsonWhere)
+        private string BuildWhereData(string jsonWhere)
         {
             Dictionary<string, object> dictList = JsonHelper.JSONToObject<Dictionary<string, object>>(jsonWhere);
             StringBuilder myWhere = new StringBuilder();

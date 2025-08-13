@@ -8,7 +8,7 @@ using System.Text;
 namespace BM.DAL
 {
     /// <summary>
-    /// 系统设置
+    /// 系统设置类
     /// </summary>
     public class SystemManageDAL
     {
@@ -85,7 +85,7 @@ namespace BM.DAL
                     sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('parameter','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加参数配置信息');");
 
                     //添加数据
-                    sqlStr.AppendFormat("INSERT INTO dbo.SA_Parameter (ParameterName,ParameterValue,ParameterNote,IsDisplay,Create_Time) VALUES (N'" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["ParameterValue"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["ParameterNote"].ToString().Trim().Replace("'", "''") + "','Y',GETDATE());");
+                    sqlStr.AppendFormat("INSERT INTO dbo.SA_Parameter (ParameterName,ParameterValue,IsDisplay,Notes,Create_Time) VALUES (N'" + dictData["ParameterName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["ParameterValue"].ToString().Trim().Replace("'", "''") + "','Y',N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace BM.DAL
                         }
                     }
                     //修改数据
-                    sqlStr.AppendFormat("UPDATE dbo.SA_Parameter SET ParameterValue=N'" + dictData["ParameterValue"].ToString().Trim().Replace("'", "''") + "',ParameterNote=N'" + dictData["ParameterNote"].ToString().Trim().Replace("'", "''") + "' WHERE " + myWhere + ";");
+                    sqlStr.AppendFormat("UPDATE dbo.SA_Parameter SET ParameterValue=N'" + dictData["ParameterValue"].ToString().Trim().Replace("'", "''") + "',Notes=N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "' WHERE " + myWhere + ";");
                 }
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }

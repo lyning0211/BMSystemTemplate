@@ -140,7 +140,9 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LogManageController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
+    <Compile Include="Controllers\StoreroomManageController.cs" />
     <Compile Include="Controllers\SystemManageController.cs" />
+    <Compile Include="Controllers\UserManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -1378,10 +1380,15 @@
     <Content Include="Views\LogManage\LogTraceIndex.cshtml" />
     <Content Include="Views\Project\DepartmentIndex.cshtml" />
     <Content Include="Views\Project\DepartmentInfo.cshtml" />
+    <Content Include="Views\Project\EducationalBackgroundIndex.cshtml" />
+    <Content Include="Views\Project\EducationalBackgroundInfo.cshtml" />
+    <Content Include="Views\UserManage\ClientIndex.cshtml" />
+    <Content Include="Views\UserManage\ClientInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Logs\" />
+    <Folder Include="Views\StoreroomManage\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

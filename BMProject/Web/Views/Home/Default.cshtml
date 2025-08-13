@@ -113,8 +113,8 @@
                 if (data.Success == true) {
                     //登录成功
                     layer.msg(data.ReturnString, { icon: 1 });
-                    //1秒后跳转
-                    setTimeout(function () { window.location = "/Home/Index"; }, 1000);
+                    //跳转页面
+                    setTimeout(function () { window.location = "/Home/Index"; }, 500);
                 }
                 else {
                     //自动刷新验证码

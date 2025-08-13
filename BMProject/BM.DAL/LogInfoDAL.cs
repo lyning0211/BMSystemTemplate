@@ -7,7 +7,7 @@ using System.Text;
 namespace BM.DAL
 {
     /// <summary>
-    /// 日志信息
+    /// 日志信息类
     /// </summary>
     public class LogInfoDAL
     {

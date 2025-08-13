@@ -84,6 +84,20 @@ namespace Web.Controllers
             return View();
         }
 
+        //学历信息页面
+        [FilterConfig]
+        public ActionResult EducationalBackgroundIndex()
+        {
+            return View();
+        }
+
+        //学历信息页面（添加/修改）
+        [FilterConfig]
+        public ActionResult EducationalBackgroundInfo()
+        {
+            return View();
+        }
+
 
         /*数据*/
         /// <summary>
@@ -132,7 +146,6 @@ namespace Web.Controllers
                 sbHtml.Append("<th width=\"25\"><input type=\"checkbox\" onchange=\"selAll(this);\" name=\"\" value=\"\" class=\"pointer\"></th>");//全选
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "序号");//序号
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "角色名称");//角色名称
-                sbHtml.AppendFormat("<th><span>{0}</span></th>", "备注");//备注
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "创建时间");//创建时间
                 sbHtml.AppendFormat("<th width=\"120\"><span>{0}</span></th>", "操作");//操作
                 sbHtml.Append("</tr></thead><tbody class=\"body\">");
@@ -153,7 +166,6 @@ namespace Web.Controllers
                         sbHtml.AppendFormat("<td><input type=\"checkbox\" value=\"{0}\" name=\"selAllData\" class=\"pointer\"></td>", dt.Rows[i]["RoleGUID"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", i + 1);
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["RoleName"].ToString());
-                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["RoleNote"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["Create_Time"].ToString());
                     //操作
                     if (dt.Rows[i]["RoleType"].ToString() == "sa")//超级管理员
@@ -509,7 +521,7 @@ namespace Web.Controllers
                 {
                     //角色类型
                     string roleType = "";
-                    DataRow[] drRoles = dtRoles.Select("RoleGUID ='" + dt.Rows[i]["UserRoleGUID"].ToString() + "'");
+                    DataRow[] drRoles = dtRoles.Select("RoleID ='" + dt.Rows[i]["UserRoleID"].ToString() + "'");
                     if (drRoles != null && drRoles.Length > 0)
                         roleType = drRoles[0]["RoleType"].ToString();
 
@@ -796,7 +808,6 @@ namespace Web.Controllers
                 sbHtml.Append("<th width=\"25\"><input type=\"checkbox\" onchange=\"selAll(this);\" name=\"\" value=\"\" class=\"pointer\"></th>");//全选
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "序号");//序号
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "部门名称");//部门名称
-                sbHtml.AppendFormat("<th><span>{0}</span></th>", "备注");//备注
                 sbHtml.AppendFormat("<th><span>{0}</span></th>", "创建时间");//创建时间
                 sbHtml.AppendFormat("<th width=\"120\"><span>{0}</span></th>", "操作");//操作
                 sbHtml.Append("</tr></thead><tbody class=\"body\">");
@@ -814,7 +825,6 @@ namespace Web.Controllers
                     sbHtml.AppendFormat("<td><input type=\"checkbox\" value=\"{0}\" name=\"selAllData\" class=\"pointer\"></td>", dt.Rows[i]["DepartmentGUID"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", i + 1);
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["DepartmentName"].ToString());
-                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["DepartmentNote"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["Create_Time"].ToString());
                     //操作
                     sbHtml.Append("<td>");
@@ -965,6 +975,213 @@ namespace Web.Controllers
 
                 //批量删除数据
                 string result = ProjectInfoDAL.DeleteDepartmentInfo(idList, pUserMapInfo);
+                if (result == "")
+                {
+                    message.Success = true;
+                    message.ReturnString = "删除成功";
+                }
+                else
+                {
+                    message.Success = false;
+                    message.ReturnString = "删除失败";
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Success = false;
+                message.ReturnString = ex.Message;
+            }
+
+            return Json(message);
+        }
+        #endregion
+
+        #region 学历管理
+        /// <summary>
+        /// 获取学历信息列表
+        /// </summary>
+        /// <param name="jsonData"></param>
+        /// <returns></returns>
+        [FilterConfig]
+        public JsonResult GetEducationalBackgroundTableData(string jsonData)
+        {
+            Message message = new Message();
+            StringBuilder sbHtml = new StringBuilder();
+            try
+            {
+                Dictionary<string, object> pDict = JsonHelper.JSONToObject<Dictionary<string, object>>(jsonData);
+
+                sbHtml.Append("<thead><tr class=\"text-c\">");
+                sbHtml.Append("<th width=\"25\"><input type=\"checkbox\" onchange=\"selAll(this);\" name=\"\" value=\"\" class=\"pointer\"></th>");//全选
+                sbHtml.AppendFormat("<th><span>{0}</span></th>", "序号");//序号
+                sbHtml.AppendFormat("<th><span>{0}</span></th>", "学历名称");//学历名称
+                sbHtml.AppendFormat("<th><span>{0}</span></th>", "创建时间");//创建时间
+                sbHtml.AppendFormat("<th width=\"120\"><span>{0}</span></th>", "操作");//操作
+                sbHtml.Append("</tr></thead><tbody class=\"body\">");
+
+                string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
+                string orderBy = "Create_Time DESC";
+                DataTable dt = ProjectInfoDAL.GetEducationalBackgroundTable(myWhere, orderBy);
+                //if (dt.Rows.Count == 0)
+                //{
+                //    sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");//没有数据
+                //}
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    sbHtml.Append("<tr class=\"text-c\">");
+                    sbHtml.AppendFormat("<td><input type=\"checkbox\" value=\"{0}\" name=\"selAllData\" class=\"pointer\"></td>", dt.Rows[i]["EducationalBackgroundGUID"].ToString());
+                    sbHtml.AppendFormat("<td><span>{0}</span></td>", i + 1);
+                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["EducationalBackgroundName"].ToString());
+                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["Create_Time"].ToString());
+                    //操作
+                    sbHtml.Append("<td>");
+                    sbHtml.AppendFormat("<span><a style=\"text-decoration:none\" class=\"ml-5\" href=\"/Project/EducationalBackgroundInfo?EducationalBackgroundGUID={1}\" title=\"{0}\"><i class=\"Hui-iconfont\">&#xe6df;</i></a></span>", "修改", dt.Rows[i]["EducationalBackgroundGUID"].ToString());//修改
+                    sbHtml.AppendFormat("<span><a title=\"{0}\" href=\"javascript:;\" onclick=\"del_info(this,'{1}')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6e2;</i></a></span>", "删除", dt.Rows[i]["EducationalBackgroundGUID"].ToString());//删除
+                    sbHtml.Append("</td>");
+                    sbHtml.Append("</tr>");
+                }
+                sbHtml.Append("</tbody>");
+
+                message.Success = true;
+                message.ReturnString = sbHtml.ToString();
+                message.StrReturn = dt.Rows.Count.ToString();
+            }
+            catch (Exception ex)
+            {
+                message.Success = false;
+                message.ReturnString = ex.Message;
+            }
+            return Json(message);
+        }
+
+        /// <summary>
+        /// 获取学历信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [FilterConfig]
+        public JsonResult GetEducationalBackgroundInfoData(string id)
+        {
+            Message message = new Message();
+            try
+            {
+                string myWhere = "EducationalBackgroundGUID='" + id + "'";
+                DataTable dt = ProjectInfoDAL.GetEducationalBackgroundTable(myWhere, "");
+                if (dt.Rows.Count > 0)
+                {
+                    message.Success = true;
+                    message.ReturnString = JsonHelper.DataTableToJson2(dt);
+                }
+                else
+                {
+                    message.Success = false;
+                    message.ReturnString = "数据加载失败！";//数据加载失败！
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Success = false;
+                message.ReturnString = ex.Message;
+            }
+
+            return Json(message);
+        }
+
+        /// <summary>
+        /// 保存学历数据
+        /// </summary>
+        /// <param name="jsonData"></param>
+        /// <returns></returns>
+        [FilterConfig]
+        public JsonResult SaveEducationalBackgroundInfoData(string jsonData)
+        {
+            Message message = new Message();
+            try
+            {
+                Dictionary<string, object> pDict = JsonHelper.JSONToObject<Dictionary<string, object>>(jsonData);
+
+                //获取缓存登录账号信息
+                pUserMapInfo = (LoginUserModel)Session["LoginUser"];
+
+                //保存数据
+                string result = ProjectInfoDAL.SaveEducationalBackgroundInfoData(pDict, pUserMapInfo);
+                if (result == "")
+                {
+                    message.Success = true;
+                    message.ReturnString = "保存成功！";
+                }
+                else if (result == "-1")
+                {
+                    message.Success = false;
+                    message.ReturnString = "学历名称重复！";
+                }
+                else
+                {
+                    message.Success = false;
+                    message.ReturnString = "保存失败！";
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Success = false;
+                message.ReturnString = ex.Message;
+            }
+
+            return Json(message);
+        }
+
+        /// <summary>
+        /// 删除学历信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [FilterConfig]
+        public JsonResult DelEducationalBackgroundInfoData(string id)
+        {
+            Message message = new Message();
+            try
+            {
+                //获取缓存登录账号信息
+                pUserMapInfo = (LoginUserModel)Session["LoginUser"];
+
+                //删除数据
+                string result = ProjectInfoDAL.DelEducationalBackgroundInfo(id, pUserMapInfo);
+                if (result == "")
+                {
+                    message.Success = true;
+                    message.ReturnString = "删除成功";
+                }
+                else
+                {
+                    message.Success = false;
+                    message.ReturnString = "删除失败";
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Success = false;
+                message.ReturnString = ex.Message;
+            }
+
+            return Json(message);
+        }
+
+        /// <summary>
+        /// 批量删除学历信息
+        /// </summary>
+        /// <param name="idList"></param>
+        /// <returns></returns>
+        [FilterConfig]
+        public JsonResult DeleteEducationalBackgroundInfoData(string idList)
+        {
+            Message message = new Message();
+            try
+            {
+                //获取缓存登录账号信息
+                pUserMapInfo = (LoginUserModel)Session["LoginUser"];
+
+                //批量删除数据
+                string result = ProjectInfoDAL.DeleteEducationalBackgroundInfo(idList, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;

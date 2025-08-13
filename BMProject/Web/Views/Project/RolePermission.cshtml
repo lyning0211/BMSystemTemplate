@@ -56,9 +56,9 @@
 <script type="text/javascript" src="~/Content/h-ui/lib/laypage/1.2/laypage.js"></script>
 <script src="~/Content/js/jquery-ui.bm.js"></script>
 <script type="text/javascript">
-    var role_guid = "";
+    var roleGUID = "";
     $(function () {
-        role_guid = getQueryString("RoleGUID");
+        roleGUID = getQueryString("RoleGUID");
         loadView();
     });
 
@@ -68,7 +68,7 @@
             type: 'POST',
             url: "/Project/GetRolePermissionTableData",
             contentType: 'application/x-www-form-urlencoded;charset=utf-8',
-            data: { roleGUID: role_guid },
+            data: { roleGUID: roleGUID },
             dataType: 'json',
             success: function (data) {
                 if (data.Success == true) {
@@ -100,7 +100,7 @@
         });
 
         var pageobj = {};
-        pageobj.RoleGUID = role_guid;
+        pageobj.RoleGUID = roleGUID;
         pageobj.idList = idList;
         layer.confirm('确认要设置权限吗？', function (index) {
             $.ajax({
@@ -113,8 +113,8 @@
                     if (data.Success == true) {
                         //删除成功
                         layer.msg(data.ReturnString, { icon: 1 });
-                        //1秒后跳转
-                        setTimeout(function () { window.location = "/Project/RoleIndex"; }, 1000);
+                        //跳转页面
+                        setTimeout(function () { window.location = "/Project/RoleIndex"; }, 500);
                     }
                     else {
                         //设置权限失败

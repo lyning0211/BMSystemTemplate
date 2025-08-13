@@ -50,7 +50,7 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">备注：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text" id="ParameterNote" name="ParameterNote" maxlength="200">
+                    <input type="text" class="input-text" id="Notes" name="Notes" maxlength="200">
                 </div>
             </div>
             <div class="row cl">
@@ -76,10 +76,10 @@
 <script type="text/javascript" src="~/Content/h-ui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
 <script src="~/Content/js/jquery-ui.bm.js"></script>
 <script>
-    var parameterName = "";
+    var guid = "";
     $(function () {
-        parameterName = getQueryString("ParameterName");
-        if (parameterName != "") {
+        guid = getQueryString("ParameterName");
+        if (guid != "") {
             $("#ParameterName").attr("readonly", true).addClass("disabled");
         }
 
@@ -88,12 +88,12 @@
 
     //装载信息
     function loadData() {
-        if (parameterName != "") {
+        if (guid != "") {
             $.ajax({
                 type: "POST",
                 url: "/SystemManage/GetConfigInfoData",
                 contentType: 'application/x-www-form-urlencoded;charset=utf-8',
-                data: { parameterName: parameterName },
+                data: { guid: guid },
                 dataType: "json",
                 success: function (data) {
                     if (data.Success == true) {
@@ -113,13 +113,13 @@
 
     //提交保存
     function SaveData() {
-        var parametername = $("#ParameterName").val();
-        if (parametername.trim() == "") {
+        var parameterName = $("#ParameterName").val();
+        if (parameterName.trim() == "") {
             layer.alert('请输入键名', { icon: 2 })
             return false;
         }
-        var parametervalue = $("#ParameterValue").val();
-        if (parametervalue.trim() == "") {
+        var parameterValue = $("#ParameterValue").val();
+        if (parameterValue.trim() == "") {
             layer.alert('请输入键值', { icon: 2 })
             return false;
         }

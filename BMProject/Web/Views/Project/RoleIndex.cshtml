@@ -76,7 +76,7 @@
                 "aaSorting": [],//默认第几个排序
                 "bStateSave": false,//状态保存
                 "aoColumnDefs": [
-                    { "orderable": false, "aTargets": [0, 3, 5] }// 制定列不参与排序
+                    { "orderable": false, "aTargets": [0, 4] }// 制定列不参与排序
                 ]
             });
         }, 100);
@@ -130,8 +130,8 @@
                     if (data.Success == true) {
                         //删除成功
                         layer.msg(data.ReturnString, { icon: 1 });
-                        //1秒后跳转
-                        setTimeout(function () { window.location = "/Project/RoleIndex"; }, 1000);
+                        //跳转页面
+                        setTimeout(function () { window.location = "/Project/RoleIndex"; }, 500);
                     }
                     else {
                         //删除失败
@@ -167,8 +167,8 @@
                     if (data.Success == true) {
                         //删除成功
                         layer.msg(data.ReturnString, { icon: 1 });
-                        //1秒后跳转
-                        setTimeout(function () { window.location = "/Project/RoleIndex"; }, 1000);
+                        //跳转页面
+                        setTimeout(function () { window.location = "/Project/RoleIndex"; }, 500);
                     }
                     else {
                         //删除失败

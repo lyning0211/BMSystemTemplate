@@ -23,7 +23,10 @@ GO
 ALTER TABLE dbo.SA_Role ADD CONSTRAINT UQ_SA_Role UNIQUE (RoleName);
 GO
 -- 创建索引
-CREATE INDEX IX_SA_Role ON dbo.SA_Role (RoleGUID,RoleName);
+-- 索引1：角色GUID查询（高频单点查询）
+CREATE UNIQUE NONCLUSTERED INDEX IX_RoleGUID ON dbo.SA_Role (RoleGUID) INCLUDE (RoleName, RoleType) ;
+-- 索引2：角色类型查询（组合过滤条件）
+CREATE NONCLUSTERED INDEX IX_RoleType ON dbo.SA_Role (RoleType) INCLUDE (RoleName, RoleGUID, Create_Time);
 GO
 
 --系统账号信息表
@@ -37,7 +40,7 @@ CREATE TABLE dbo.SA_User
 	UserName      NVARCHAR(100) NOT NULL, --用户名
 	UserPassWord  VARCHAR(36) NOT NULL, --用户密码（MD5加密）
 	UserStatus    INT NOT NULL, --状态：-1-禁用，0-启用
-	UserSex       VARCHAR(2) NULL, --性别：M-男，F-女
+	UserSex       CHAR(1) NULL, --性别：M-男，F-女
 	UserRoleID  INT NOT NULL, --角色ID
 	Phone         VARCHAR(15) NULL, --联系电话
 	Email         VARCHAR(100) NULL, --邮箱账号
@@ -49,7 +52,12 @@ GO
 ALTER TABLE dbo.SA_User ADD CONSTRAINT UQ_SA_User UNIQUE (UserName);
 GO
 -- 创建索引
-CREATE INDEX IX_SA_User ON dbo.SA_User (UserGUID,UserName,UserStatus,UserSex);
+-- 索引1：用户登录验证（高频查询场景）
+CREATE UNIQUE NONCLUSTERED INDEX IX_User_Login ON dbo.SA_User (UserName) INCLUDE (UserPassWord, UserStatus);
+-- 索引2：角色用户查询（高频组合查询）
+CREATE NONCLUSTERED INDEX IX_Role_User ON dbo.SA_User (UserRoleID, UserStatus) INCLUDE (UserID, UserName, UserGUID);
+-- 索引3：用户状态查询（高频过滤条件）
+CREATE NONCLUSTERED INDEX IX_User_Status ON dbo.SA_User (UserStatus) INCLUDE (UserName, UserRoleID);
 GO
 INSERT INTO dbo.SA_User(UserGUID,UserName,UserPassWord,UserSex,UserRoleID,UserStatus,Phone,Email,Create_Time) VALUES (NEWID(), 'sa', 'E10ADC3949BA59ABBE56E057F20F883E', '', 1,0,NULL,NULL,GETDATE());
 GO
@@ -65,8 +73,8 @@ CREATE TABLE dbo.SA_Module
 	ParentID	 INT NOT NULL, --上级菜单ID
 	Link	     VARCHAR(100) NULL, --链接地址
 	OrderNo	     INT NOT NULL, --排序
-	IsDisplay	 VARCHAR(2) NOT NULL, --是否显示：Y-显示，N-不显示
-	IsFirstMenu	 VARCHAR(2) NOT NULL, --是否一级菜单：Y-是，N-不是
+	IsDisplay	 CHAR(1) NOT NULL, --是否显示：Y-显示，N-不显示
+	IsFirstMenu	 CHAR(1) NOT NULL, --是否一级菜单：Y-是，N-不是
 	Flag	     INT NULL, --标识
 	Create_Time	 DATETIME NOT NULL, --创建时间
 	CONSTRAINT PK_SA_Module PRIMARY KEY (ModuleID)
@@ -103,7 +111,7 @@ CREATE TABLE dbo.SA_Department
 	DepartmentID	INT IDENTITY(1,1)	NOT NULL, --自增ID
 	DepartmentGUID      VARCHAR(36) NOT NULL, --部门GUID
 	DepartmentName      NVARCHAR(100) NOT NULL, --部门名称
-	DepartmentNote      NVARCHAR(200) NULL, --备注
+	Notes      NVARCHAR(200) NULL, --备注
 	Create_Time	  DATETIME NOT NULL, --创建时间
 	CONSTRAINT PK_SA_Department PRIMARY KEY (DepartmentID)
 )
@@ -112,7 +120,8 @@ GO
 ALTER TABLE dbo.SA_Department ADD CONSTRAINT UQ_SA_Department UNIQUE (DepartmentName);
 GO
 -- 创建索引
-CREATE INDEX IX_SA_Department ON dbo.SA_Department (DepartmentGUID,DepartmentName);
+-- 索引1：GUID查询优化（高频单点查询）
+CREATE UNIQUE NONCLUSTERED INDEX IX_DepartmentGUID ON dbo.SA_Department (DepartmentGUID) INCLUDE (DepartmentName);
 GO
 
 /*系统设置*/
@@ -125,8 +134,8 @@ CREATE TABLE dbo.SA_Parameter
 	PID		 	    INT IDENTITY(1,1) NOT NULL,	--自增ID
 	ParameterName	VARCHAR(50) NOT NULL, --键名
 	ParameterValue	NVARCHAR(100) NOT NULL, --键值
-	ParameterNote	NVARCHAR(200) NOT NULL, --备注
-	IsDisplay	 VARCHAR(2) NOT NULL, --是否显示：Y-显示，N-不显示
+	IsDisplay	 CHAR(1) NOT NULL, --是否显示：Y-显示，N-不显示
+	Notes	NVARCHAR(200) NOT NULL, --备注
 	Create_Time	 DATETIME NOT NULL, --创建时间
 	CONSTRAINT PK_SA_Parameter PRIMARY KEY (PID)
 )
@@ -137,8 +146,8 @@ GO
 -- 创建索引
 CREATE INDEX IX_SA_Parameter ON dbo.SA_Parameter (ParameterName);
 GO
-INSERT INTO dbo.SA_Parameter(ParameterName,ParameterValue,ParameterNote,IsDisplay,Create_Time) VALUES ('project_name', '后台管理系统','系统名称', 'Y',GETDATE());
-INSERT INTO dbo.SA_Parameter(ParameterName,ParameterValue,ParameterNote,IsDisplay,Create_Time) VALUES ('company_name', 'XXXX科技有限公司','公司名称', 'Y',GETDATE());
+INSERT INTO dbo.SA_Parameter(ParameterName,ParameterValue,Notes,IsDisplay,Create_Time) VALUES ('project_name', '后台管理系统','系统名称', 'Y',GETDATE());
+INSERT INTO dbo.SA_Parameter(ParameterName,ParameterValue,Notes,IsDisplay,Create_Time) VALUES ('company_name', 'XXXX科技有限公司','公司名称', 'Y',GETDATE());
 GO
 
 /*日志信息*/
@@ -160,7 +169,15 @@ CREATE TABLE dbo.Log_Login
 )
 GO
 -- 创建索引
-CREATE INDEX IX_Log_Login ON dbo.Log_Login (UserID, Operation_Time, Operation_IP);
+-- 1. 时间范围查询索引（95%的日志查询场景）
+CREATE INDEX IX_Log_Login_OperationTime ON dbo.Log_Login (Operation_Time DESC) 
+INCLUDE (UserID, UserName, UserRoleID, Operation_IP);
+-- 2. 用户行为分析索引
+CREATE INDEX IX_Log_Login_User ON dbo.Log_Login (UserID, Operation_Time DESC) 
+INCLUDE (UserRoleID, Operation_IP);
+-- 3. 角色行为分析索引
+CREATE INDEX IX_Log_Login_Role ON dbo.Log_Login (UserRoleID, Operation_Time DESC) 
+INCLUDE (UserID, Operation_IP);
 GO
 
 --数据操作日志表
@@ -169,7 +186,7 @@ IF OBJECT_ID ('dbo.Log_Operation') IS NOT NULL
 GO
 CREATE TABLE dbo.Log_Operation
 (
-	LogID			INT IDENTITY(1,1) NOT NULL,	--日志ID，自增
+    LogID			INT IDENTITY(1,1) NOT NULL,	--日志ID，自增
 	Object_Name		VARCHAR(50) NOT NULL, --操作对象
 	UserID	    INT NOT NULL, --操作用户ID
 	UserName        NVARCHAR(100) NOT NULL, --操作用户名
@@ -182,8 +199,14 @@ CREATE TABLE dbo.Log_Operation
 	CONSTRAINT PK_Log_Operation PRIMARY KEY (LogID)
 )
 GO
--- 创建索引
-CREATE INDEX IX_Log_Operation ON dbo.Log_Operation (Object_Name,UserID,UserRoleID,Operation_Time,Operation_Type,Operation_IP);
+-- 索引1：时间范围查询（高频场景）
+CREATE INDEX IX_Operation_Time ON dbo.Log_Operation (Operation_Time);
+-- 索引2：用户行为追踪（高频组合查询）
+CREATE INDEX IX_User_Action ON dbo.Log_Operation (UserID, Operation_Type) INCLUDE (Operation_Time, Object_Name);
+-- 索引3：对象操作审计（按对象查询）
+CREATE INDEX IX_Object_Operation ON dbo.Log_Operation (Object_Name, Operation_Type) INCLUDE (Operation_Time, UserID);
+-- 索引4：角色操作分析（按角色统计）
+CREATE INDEX IX_Role_Operation ON dbo.Log_Operation (UserRoleID, Operation_Time) INCLUDE (Operation_Type);
 GO
 
 --数据修改痕迹日志表
@@ -210,11 +233,14 @@ CREATE TABLE dbo.Log_Trace
 	CONSTRAINT PK_Log_Trace PRIMARY KEY (LogID)
 )
 GO
--- 主查询索引（键长度172字节）
-CREATE INDEX IX_Log_Trace_Main ON dbo.Log_Trace (Object_Type, Object_GUID) INCLUDE (UserID, UserName, Operation_Time);
-GO
--- 审计查询索引（键长度272字节）
-CREATE INDEX IX_Log_Trace_Audit ON dbo.Log_Trace (Operation_Type, Operation_Time) INCLUDE (Object_Name, UserName);
+-- 索引1：对象追踪查询（高频查询场景）
+CREATE INDEX IX_Object_Trace ON dbo.Log_Trace (Object_Type,Object_GUID,Operation_Time DESC) INCLUDE (UserID, UserName, Operation_Type);
+-- 索引2：审计分析（时间范围+操作类型）
+CREATE INDEX IX_Audit_Analysis ON dbo.Log_Trace (Operation_Type,Operation_Time DESC) INCLUDE (Object_Name, UserRoleName, Operation_IP);
+-- 索引3：用户行为追踪（新增）
+CREATE INDEX IX_User_Behavior ON dbo.Log_Trace (UserID,Operation_Time DESC) INCLUDE (Object_Type, Operation_Type);
+-- 索引4：角色操作审计（新增）
+CREATE INDEX IX_Role_Audit ON dbo.Log_Trace (UserRoleID,Operation_Time DESC) INCLUDE (Operation_Type, Object_Type);
 GO
 
 
@@ -261,7 +287,7 @@ CREATE VIEW [dbo].[Log_Trace_v] AS
 --角色信息日志
 SELECT a.LogID,a.Object_Type,a.Object_GUID,ISNULL(c.RoleName,a.Object_Name) AS Object_Name,a.Object_Field,a.Old_Value,a.New_Value,a.UserID,a.UserRoleID,a.Operation_Time,
 	a.Operation_Type,a.Operation_Note,a.Operation_IP,ISNULL(b.UserName,a.UserName) AS UserName,ISNULL(b.RoleName,a.UserRoleName) AS UserRoleName
-FROM dbo.Log_Trace a
+FROM dbo.Log_Trace a WITH (INDEX(IX_Object_Trace))
 LEFT JOIN dbo.SA_User_v b ON a.UserID=b.UserID
 LEFT JOIN dbo.SA_Role c ON a.Object_GUID=c.RoleGUID
 WHERE a.Object_Type='role'
@@ -269,7 +295,7 @@ UNION
 --账号信息日志
 SELECT a.LogID,a.Object_Type,a.Object_GUID,ISNULL(c.UserName,a.Object_Name) AS Object_Name,a.Object_Field,a.Old_Value,a.New_Value,a.UserID,a.UserRoleID,a.Operation_Time,
 	a.Operation_Type,a.Operation_Note,a.Operation_IP,ISNULL(b.UserName,a.UserName) AS UserName,ISNULL(b.RoleName,a.UserRoleName) AS UserRoleName
-FROM dbo.Log_Trace a
+FROM dbo.Log_Trace a WITH (INDEX(IX_Object_Trace))
 LEFT JOIN dbo.SA_User_v b ON a.UserID=b.UserID
 LEFT JOIN dbo.SA_User c ON a.Object_GUID=c.UserGUID
 WHERE a.Object_Type='user'
@@ -277,23 +303,15 @@ UNION
 --部门信息日志
 SELECT a.LogID,a.Object_Type,a.Object_GUID,ISNULL(c.DepartmentName,a.Object_Name) AS Object_Name,a.Object_Field,a.Old_Value,a.New_Value,a.UserID,a.UserRoleID,a.Operation_Time,
 	a.Operation_Type,a.Operation_Note,a.Operation_IP,ISNULL(b.UserName,a.UserName) AS UserName,ISNULL(b.RoleName,a.UserRoleName) AS UserRoleName
-FROM dbo.Log_Trace a
+FROM dbo.Log_Trace a WITH (INDEX(IX_Object_Trace))
 LEFT JOIN dbo.SA_User_v b ON a.UserID=b.UserID
 LEFT JOIN dbo.SA_Department c ON a.Object_GUID=c.DepartmentGUID
 WHERE a.Object_Type='department'
 UNION
---学历信息日志
-SELECT a.LogID,a.Object_Type,a.Object_GUID,ISNULL(c.EducationalBackgroundName,a.Object_Name) AS Object_Name,a.Object_Field,a.Old_Value,a.New_Value,a.UserID,a.UserRoleID,a.Operation_Time,
-	a.Operation_Type,a.Operation_Note,a.Operation_IP,ISNULL(b.UserName,a.UserName) AS UserName,ISNULL(b.RoleName,a.UserRoleName) AS UserRoleName
-FROM dbo.Log_Trace a
-LEFT JOIN dbo.SA_User_v b ON a.UserID=b.UserID
-LEFT JOIN dbo.SA_EducationalBackground c ON a.Object_GUID=c.EducationalBackgroundGUID
-WHERE a.Object_Type='educationalbackground'
-UNION
 --参数配置信息日志
 SELECT a.LogID,a.Object_Type,a.Object_GUID,ISNULL(c.ParameterName,a.Object_Name) AS Object_Name,a.Object_Field,a.Old_Value,a.New_Value,a.UserID,a.UserRoleID,a.Operation_Time,
 	a.Operation_Type,a.Operation_Note,a.Operation_IP,ISNULL(b.UserName,a.UserName) AS UserName,ISNULL(b.RoleName,a.UserRoleName) AS UserRoleName
-FROM dbo.Log_Trace a
+FROM dbo.Log_Trace a WITH (INDEX(IX_Object_Trace))
 LEFT JOIN dbo.SA_User_v b ON a.UserID=b.UserID
 LEFT JOIN dbo.SA_Parameter c ON a.Object_GUID=c.ParameterName
 WHERE a.Object_Type='parameter'

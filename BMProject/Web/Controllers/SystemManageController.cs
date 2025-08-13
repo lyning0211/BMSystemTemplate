@@ -68,7 +68,7 @@ namespace Web.Controllers
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", i + 1);
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["ParameterName"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["ParameterValue"].ToString());
-                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["ParameterNote"].ToString());
+                    sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["Notes"].ToString());
                     sbHtml.AppendFormat("<td><span>{0}</span></td>", dt.Rows[i]["Create_Time"].ToString());
                     //操作
                     sbHtml.Append("<td>");

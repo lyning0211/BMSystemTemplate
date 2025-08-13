@@ -5,6 +5,9 @@ using System.Data;
 
 namespace BM.DAL
 {
+    /// <summary>
+    /// 公共类
+    /// </summary>
     public class CommonDAL
     {
         /// <summary>

@@ -8,6 +8,9 @@ using System.Text;
 
 namespace BM.DAL
 {
+    /// <summary>
+    /// 项目基础信息类
+    /// </summary>
     public class ProjectInfoDAL
     {
         #region 角色信息 SA_Role
@@ -106,7 +109,7 @@ namespace BM.DAL
                     sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('role','" + newGUID + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加角色信息');");
 
                     //添加数据
-                    sqlStr.AppendFormat("INSERT INTO dbo.SA_Role (RoleGUID,RoleName,RoleType,RoleNote,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','other',N'" + dictData["RoleNote"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
+                    sqlStr.AppendFormat("INSERT INTO dbo.SA_Role (RoleGUID,RoleName,RoleType,Notes,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "','other',N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
                 }
                 else
                 {
@@ -134,7 +137,7 @@ namespace BM.DAL
                         }
                     }
                     //修改数据
-                    sqlStr.AppendFormat("UPDATE dbo.SA_Role SET RoleName=N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "',RoleNote=N'" + dictData["RoleNote"].ToString().Trim().Replace("'", "''") + "' WHERE RoleGUID='" + dictData["RoleGUID"] + "';");
+                    sqlStr.AppendFormat("UPDATE dbo.SA_Role SET RoleName=N'" + dictData["RoleName"].ToString().Trim().Replace("'", "''") + "',Notes=N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "' WHERE RoleGUID='" + dictData["RoleGUID"] + "';");
                 }
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
@@ -745,7 +748,7 @@ namespace BM.DAL
                     sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('department','" + newGUID + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加部门信息');");
 
                     //添加数据
-                    sqlStr.AppendFormat("INSERT INTO dbo.SA_Department (DepartmentGUID,DepartmentName,DepartmentNote,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["DepartmentNote"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
+                    sqlStr.AppendFormat("INSERT INTO dbo.SA_Department (DepartmentGUID,DepartmentName,Notes,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
                 }
                 else
                 {
@@ -773,7 +776,7 @@ namespace BM.DAL
                         }
                     }
                     //修改数据
-                    sqlStr.AppendFormat("UPDATE dbo.SA_Department SET DepartmentName=N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "',DepartmentNote=N'" + dictData["DepartmentNote"].ToString().Trim().Replace("'", "''") + "' WHERE DepartmentGUID='" + dictData["DepartmentGUID"] + "';");
+                    sqlStr.AppendFormat("UPDATE dbo.SA_Department SET DepartmentName=N'" + dictData["DepartmentName"].ToString().Trim().Replace("'", "''") + "',Notes=N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "' WHERE DepartmentGUID='" + dictData["DepartmentGUID"] + "';");
                 }
                 int result = DBHelper.ExecuteSql(sqlStr.ToString());
             }
@@ -827,6 +830,173 @@ namespace BM.DAL
                 foreach (string id in idListArray)
                 {
                     string result = DelDepartmentInfo(id, pUserMapInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strRes;
+        }
+        #endregion
+
+        #region 学历信息 SA_EducationalBackground
+        /// <summary>
+        /// 获取学历信息
+        /// </summary>
+        /// <param name="myWhere"></param>
+        /// <param name="myOrderBy"></param>
+        /// <returns></returns>
+        public static DataTable GetEducationalBackgroundTable(string myWhere, string myOrderBy)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                string sql = @"SELECT * FROM dbo.SA_EducationalBackground";
+                if (myWhere != "")
+                    sql += " WHERE " + myWhere;
+                if (myOrderBy != "")
+                    sql += " ORDER BY " + myOrderBy;
+
+                dt = DBHelper.GetDataTable(sql);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dt;
+        }
+
+        /// <summary>
+        /// 根据GUID获取学历名称
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public static string GetEducationalBackgroundNameByGUID(string guid)
+        {
+            string strRes = "";
+            try
+            {
+                string sqlStr = @"SELECT EducationalBackgroundName FROM dbo.SA_EducationalBackground WHERE EducationalBackgroundGUID='" + guid + "';";
+                strRes = DBHelper.GetSingle(sqlStr).ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return strRes;
+        }
+
+        /// <summary>
+        /// 保存学历信息
+        /// </summary>
+        /// <param name="dictData"></param>
+        /// <param name="pUserMapInfo"></param>
+        /// <returns></returns>
+        public static string SaveEducationalBackgroundInfoData(Dictionary<string, object> dictData, LoginUserModel pUserMapInfo)
+        {
+            string strRes = "";
+            StringBuilder sqlStr = new StringBuilder();
+            try
+            {
+                string mydate = DBHelper.ReadCurrDate();
+                if (string.IsNullOrEmpty(dictData["EducationalBackgroundGUID"].ToString()))
+                {
+                    string myWhere = "EducationalBackgroundName='" + dictData["EducationalBackgroundName"].ToString().Trim().Replace("'", "''") + "'";
+                    DataTable dt = GetEducationalBackgroundTable(myWhere, "");
+                    if (dt.Rows.Count > 0)
+                    {
+                        return "-1";//学历名称重复
+                    }
+
+                    string newGUID = Guid.NewGuid().ToString();
+                    //写入痕迹日志
+                    sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('educationalbackground','" + newGUID + "',N'" + dictData["EducationalBackgroundName"].ToString().Trim().Replace("'", "''") + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','add','" + pUserMapInfo.LoginIP + "','添加学历信息');");
+
+                    //添加数据
+                    sqlStr.AppendFormat("INSERT INTO dbo.SA_EducationalBackground (EducationalBackgroundGUID,EducationalBackgroundName,Notes,Create_Time) VALUES ('" + newGUID + "',N'" + dictData["EducationalBackgroundName"].ToString().Trim().Replace("'", "''") + "',N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "',GETDATE());");
+                }
+                else
+                {
+                    string myWhere = "EducationalBackgroundName='" + dictData["EducationalBackgroundName"].ToString().Trim().Replace("'", "''") + "' AND EducationalBackgroundGUID<>'" + dictData["EducationalBackgroundGUID"] + "'";
+                    DataTable dt = GetEducationalBackgroundTable(myWhere, "");
+                    if (dt.Rows.Count > 0)
+                    {
+                        return "-1";//学历名称重复
+                    }
+
+                    //记录日志
+                    myWhere = "EducationalBackgroundGUID='" + dictData["EducationalBackgroundGUID"] + "'";
+                    DataTable dtOld = GetEducationalBackgroundTable(myWhere, "");
+                    foreach (var item in dictData)
+                    {
+                        string object_name = item.Key;
+                        if (object_name == "EducationalBackgroundGUID")
+                            continue;
+                        string old_value = dtOld.Rows[0][item.Key].ToString().Trim().Replace("'", "''");
+                        string new_value = item.Value.ToString().Trim().Replace("'", "''");
+                        if (new_value != old_value)
+                        {
+                            //写入痕迹日志
+                            sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('educationalbackground','" + dictData["EducationalBackgroundGUID"] + "',N'" + dictData["EducationalBackgroundName"].ToString().Trim().Replace("'", "''") + "','" + object_name + "','" + old_value + "','" + new_value + "','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','update','" + pUserMapInfo.LoginIP + "','修改学历信息');");
+                        }
+                    }
+                    //修改数据
+                    sqlStr.AppendFormat("UPDATE dbo.SA_EducationalBackground SET EducationalBackgroundName=N'" + dictData["EducationalBackgroundName"].ToString().Trim().Replace("'", "''") + "',Notes=N'" + dictData["Notes"].ToString().Trim().Replace("'", "''") + "' WHERE EducationalBackgroundGUID='" + dictData["EducationalBackgroundGUID"] + "';");
+                }
+                int result = DBHelper.ExecuteSql(sqlStr.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strRes;
+        }
+
+        /// <summary>
+        /// 删除学历信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string DelEducationalBackgroundInfo(string id, LoginUserModel pUserMapInfo)
+        {
+            string strRes = "";
+            StringBuilder sqlStr = new StringBuilder();
+            try
+            {
+                string mydate = DBHelper.ReadCurrDate();
+                string educationalBackgroundName = GetEducationalBackgroundNameByGUID(id);
+                //写入痕迹日志
+                sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES('educationalbackground','" + id + "','" + educationalBackgroundName + "','','','','" + pUserMapInfo.UserID + "','" + pUserMapInfo.UserName + "','" + pUserMapInfo.UserRoleID + "','" + pUserMapInfo.UserRoleName + "','" + mydate + "','delete','" + pUserMapInfo.LoginIP + "','删除学历信息');");
+
+                //执行删除语句
+                sqlStr.AppendFormat(@"DELETE dbo.SA_EducationalBackground WHERE EducationalBackgroundGUID='{0}';", id);
+                int result = DBHelper.ExecuteSql(sqlStr.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strRes;
+        }
+
+        /// <summary>
+        /// 批量删除学历信息
+        /// </summary>
+        /// <param name="idList"></param>
+        /// <returns></returns>
+        public static string DeleteEducationalBackgroundInfo(string idList, LoginUserModel pUserMapInfo)
+        {
+            string strRes = "";
+            StringBuilder sqlStr = new StringBuilder();
+            try
+            {
+                string mydate = DBHelper.ReadCurrDate();
+                string[] idListArray = idList.Split(',');
+                foreach (string id in idListArray)
+                {
+                    string result = DelEducationalBackgroundInfo(id, pUserMapInfo);
                 }
             }
             catch (Exception ex)

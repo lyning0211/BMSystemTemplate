@@ -43,7 +43,7 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2">备注：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="text" class="input-text" id="RoleNote" name="RoleNote" maxlength="200">
+                    <input type="text" class="input-text" id="Notes" name="Notes" maxlength="200">
                 </div>
             </div>
             <div class="row cl">
@@ -69,20 +69,20 @@
 <script type="text/javascript" src="~/Content/h-ui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
 <script src="~/Content/js/jquery-ui.bm.js"></script>
 <script>
-    var role_guid = "";
+    var guid = "";
     $(function () {
-        role_guid = getQueryString("RoleGUID");
+        guid = getQueryString("RoleGUID");
         loadData();
     });
 
     //装载信息
     function loadData() {
-        if (role_guid != "") {
+        if (guid != "") {
             $.ajax({
                 type: "POST",
                 url: "/Project/GetRoleInfoData",
                 contentType: 'application/x-www-form-urlencoded;charset=utf-8',
-                data: { id: role_guid },
+                data: { id: guid },
                 dataType: "json",
                 success: function (data) {
                     if (data.Success == true) {
@@ -102,13 +102,13 @@
 
     //提交保存
     function SaveData() {
-        var rolename = $("#RoleName").val();
-        if (rolename.trim() == "") {
+        var roleName = $("#RoleName").val();
+        if (roleName.trim() == "") {
             layer.alert('请输入角色名称', { icon: 2 })
             return false;
         }
         var ele = getAllDataByName("form1");
-        ele.RoleGUID = role_guid;
+        ele.RoleGUID = guid;
         $.ajax({
             type: "POST",
             url: "/Project/SaveRoleInfoData",
