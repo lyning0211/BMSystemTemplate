@@ -1,12 +1,12 @@
 ﻿using BM.BLL.Common;
 using BM.BLL.Common.Common;
-using BM.DAL;
+using BM.BLL.Manage;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web.Mvc;
-using Web.Helper;
+using Web.App_Code;
 
 namespace Web.Controllers
 {
@@ -40,7 +40,7 @@ namespace Web.Controllers
             {
                 //根据GUID查询角色信息
                 string myWhere = "RoleGUID='" + roleGUID + "'";
-                DataTable dt = ProjectInfoDAL.GetRoleTable(myWhere, "");
+                DataTable dt = ProjectInfoBLL.GetRoleTable(myWhere, "");
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     roleName = dt.Rows[0]["RoleName"].ToString();
@@ -152,7 +152,7 @@ namespace Web.Controllers
 
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Create_Time DESC";
-                DataTable dt = ProjectInfoDAL.GetRoleTable(myWhere, orderBy);
+                DataTable dt = ProjectInfoBLL.GetRoleTable(myWhere, orderBy);
                 //if (dt.Rows.Count == 0)
                 //{
                 //    sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");//没有数据
@@ -208,7 +208,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = "RoleGUID='" + id + "'";
-                DataTable dt = ProjectInfoDAL.GetRoleTable(myWhere, "");
+                DataTable dt = ProjectInfoBLL.GetRoleTable(myWhere, "");
                 if (dt.Rows.Count > 0)
                 {
                     message.Success = true;
@@ -230,7 +230,7 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 保存角色数据
+        /// 保存角色信息
         /// </summary>
         /// <param name="jsonData"></param>
         /// <returns></returns>
@@ -246,7 +246,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //保存数据
-                string result = ProjectInfoDAL.SaveRoleInfoData(pDict, pUserMapInfo);
+                string result = ProjectInfoBLL.SaveRoleInfoData(pDict, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -287,7 +287,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //删除数据
-                string result = ProjectInfoDAL.DelRoleInfo(id, pUserMapInfo);
+                string result = ProjectInfoBLL.DelRoleInfo(id, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -323,7 +323,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //批量删除数据
-                string result = ProjectInfoDAL.DeleteRoleInfo(idList, pUserMapInfo);
+                string result = ProjectInfoBLL.DeleteRoleInfo(idList, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -366,11 +366,11 @@ namespace Web.Controllers
                 sbHtml.Append("</tr></thead><tbody>");
 
                 //所有一级菜单列表
-                DataTable dtParentModule = ProjectInfoDAL.GetModuleTable("ParentID=0 AND IsFirstMenu='Y'", "ModuleID");
+                DataTable dtParentModule = ProjectInfoBLL.GetModuleTable("ParentID=0 AND IsFirstMenu='Y'", "ModuleID");
                 //所有二级菜单列表
-                DataTable dtChildModule = ProjectInfoDAL.GetModuleTable("ParentID>0 AND IsFirstMenu='N'", "ModuleID");
+                DataTable dtChildModule = ProjectInfoBLL.GetModuleTable("ParentID>0 AND IsFirstMenu='N'", "ModuleID");
                 //角色权限列表
-                DataTable dtRolePermission = ProjectInfoDAL.GetRolePermissionTable("RoleGUID='" + roleGUID + "'", "");
+                DataTable dtRolePermission = ProjectInfoBLL.GetRolePermissionTable("RoleGUID='" + roleGUID + "'", "");
                 if (dtChildModule.Rows.Count == 0)
                 {
                     sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");
@@ -453,7 +453,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //保存数据
-                string result = ProjectInfoDAL.SaveRolePermissionData(pDict, pUserMapInfo);
+                string result = ProjectInfoBLL.SaveRolePermissionData(pDict, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -509,10 +509,10 @@ namespace Web.Controllers
                 sbHtml.AppendFormat("<th width=\"120\"><span>{0}</span></th>", "操作");//操作
                 sbHtml.Append("</tr></thead><tbody class=\"body\">");
 
-                DataTable dtRoles = ProjectInfoDAL.GetRoleTable("", "");
+                DataTable dtRoles = ProjectInfoBLL.GetRoleTable("", "");
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Create_Time DESC";
-                DataTable dt = ProjectInfoDAL.GetUserTable(myWhere, orderBy);
+                DataTable dt = ProjectInfoBLL.GetUserTable(myWhere, orderBy);
                 //if (dt.Rows.Count == 0)
                 //{
                 //    sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");//没有数据
@@ -583,7 +583,7 @@ namespace Web.Controllers
             StringBuilder sbHtml = new StringBuilder();
             try
             {
-                DataTable dtRoles = ProjectInfoDAL.GetRoleTable("RoleType<>'sa'", "RoleName");
+                DataTable dtRoles = ProjectInfoBLL.GetRoleTable("RoleType<>'sa'", "RoleName");
                 sbHtml.Append("<option value=\"\"></option>");
                 if (dtRoles != null && dtRoles.Rows.Count > 0)
                 {
@@ -616,7 +616,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = "UserGUID='" + id + "'";
-                DataTable dt = ProjectInfoDAL.GetUserTable(myWhere, "");
+                DataTable dt = ProjectInfoBLL.GetUserTable(myWhere, "");
                 if (dt.Rows.Count > 0)
                 {
                     message.Success = true;
@@ -638,7 +638,7 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 保存账号数据
+        /// 保存账号信息
         /// </summary>
         /// <param name="jsonData"></param>
         /// <returns></returns>
@@ -654,7 +654,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //保存数据
-                string result = ProjectInfoDAL.SaveUserInfoData(pDict, pUserMapInfo);
+                string result = ProjectInfoBLL.SaveUserInfoData(pDict, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -695,7 +695,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //重置密码
-                string result = ProjectInfoDAL.ResetUserPassword(userGUID, pUserMapInfo);
+                string result = ProjectInfoBLL.ResetUserPassword(userGUID, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -731,7 +731,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //删除数据
-                string result = ProjectInfoDAL.DelUserInfo(id, pUserMapInfo);
+                string result = ProjectInfoBLL.DelUserInfo(id, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -767,7 +767,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //批量删除数据
-                string result = ProjectInfoDAL.DeleteUserInfo(idList, pUserMapInfo);
+                string result = ProjectInfoBLL.DeleteUserInfo(idList, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -814,7 +814,7 @@ namespace Web.Controllers
 
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Create_Time DESC";
-                DataTable dt = ProjectInfoDAL.GetDepartmentTable(myWhere, orderBy);
+                DataTable dt = ProjectInfoBLL.GetDepartmentTable(myWhere, orderBy);
                 //if (dt.Rows.Count == 0)
                 //{
                 //    sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");//没有数据
@@ -859,7 +859,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = "DepartmentGUID='" + id + "'";
-                DataTable dt = ProjectInfoDAL.GetDepartmentTable(myWhere, "");
+                DataTable dt = ProjectInfoBLL.GetDepartmentTable(myWhere, "");
                 if (dt.Rows.Count > 0)
                 {
                     message.Success = true;
@@ -881,7 +881,7 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 保存部门数据
+        /// 保存部门信息
         /// </summary>
         /// <param name="jsonData"></param>
         /// <returns></returns>
@@ -897,7 +897,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //保存数据
-                string result = ProjectInfoDAL.SaveDepartmentInfoData(pDict, pUserMapInfo);
+                string result = ProjectInfoBLL.SaveDepartmentInfoData(pDict, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -938,7 +938,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //删除数据
-                string result = ProjectInfoDAL.DelDepartmentInfo(id, pUserMapInfo);
+                string result = ProjectInfoBLL.DelDepartmentInfo(id, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -974,7 +974,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //批量删除数据
-                string result = ProjectInfoDAL.DeleteDepartmentInfo(idList, pUserMapInfo);
+                string result = ProjectInfoBLL.DeleteDepartmentInfo(idList, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -1021,7 +1021,7 @@ namespace Web.Controllers
 
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Create_Time DESC";
-                DataTable dt = ProjectInfoDAL.GetEducationalBackgroundTable(myWhere, orderBy);
+                DataTable dt = ProjectInfoBLL.GetEducationalBackgroundTable(myWhere, orderBy);
                 //if (dt.Rows.Count == 0)
                 //{
                 //    sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");//没有数据
@@ -1066,7 +1066,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = "EducationalBackgroundGUID='" + id + "'";
-                DataTable dt = ProjectInfoDAL.GetEducationalBackgroundTable(myWhere, "");
+                DataTable dt = ProjectInfoBLL.GetEducationalBackgroundTable(myWhere, "");
                 if (dt.Rows.Count > 0)
                 {
                     message.Success = true;
@@ -1088,7 +1088,7 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 保存学历数据
+        /// 保存学历信息
         /// </summary>
         /// <param name="jsonData"></param>
         /// <returns></returns>
@@ -1104,7 +1104,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //保存数据
-                string result = ProjectInfoDAL.SaveEducationalBackgroundInfoData(pDict, pUserMapInfo);
+                string result = ProjectInfoBLL.SaveEducationalBackgroundInfoData(pDict, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -1145,7 +1145,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //删除数据
-                string result = ProjectInfoDAL.DelEducationalBackgroundInfo(id, pUserMapInfo);
+                string result = ProjectInfoBLL.DelEducationalBackgroundInfo(id, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;
@@ -1181,7 +1181,7 @@ namespace Web.Controllers
                 pUserMapInfo = (LoginUserModel)Session["LoginUser"];
 
                 //批量删除数据
-                string result = ProjectInfoDAL.DeleteEducationalBackgroundInfo(idList, pUserMapInfo);
+                string result = ProjectInfoBLL.DeleteEducationalBackgroundInfo(idList, pUserMapInfo);
                 if (result == "")
                 {
                     message.Success = true;

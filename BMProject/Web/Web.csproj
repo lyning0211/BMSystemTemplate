@@ -53,9 +53,8 @@
       <HintPath>..\Libraries\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -146,7 +145,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helper\cPublic.cs" />
+    <Compile Include="App_Code\cPublic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1384,6 +1383,12 @@
     <Content Include="Views\Project\EducationalBackgroundInfo.cshtml" />
     <Content Include="Views\UserManage\ClientIndex.cshtml" />
     <Content Include="Views\UserManage\ClientInfo.cshtml" />
+    <Content Include="Views\SystemManage\CurrencyIndex.cshtml" />
+    <Content Include="Views\SystemManage\CurrencyInfo.cshtml" />
+    <Content Include="Views\SystemManage\GoodsTypeIndex.cshtml" />
+    <Content Include="Views\SystemManage\GoodsTypeInfo.cshtml" />
+    <Content Include="Views\SystemManage\GoodsTypeIndex2.cshtml" />
+    <Content Include="Views\SystemManage\GoodsTypeIndex3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1422,10 +1427,13 @@
       <Project>{7c969ea3-c773-4e03-8d31-212481022672}</Project>
       <Name>BM.BLL.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BM.DAL\BM.DAL.csproj">
-      <Project>{18019f50-54a5-4b0f-90de-e645f9f3f066}</Project>
-      <Name>BM.DAL</Name>
+    <ProjectReference Include="..\BM.BLL.Manage\BM.BLL.Manage.csproj">
+      <Project>{4c79a271-ed52-4df7-ab51-004ad56da108}</Project>
+      <Name>BM.BLL.Manage</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

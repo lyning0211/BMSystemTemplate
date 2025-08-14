@@ -2,7 +2,6 @@
 @{
     Layout = null;
 }
-@using System.Data;
 
 <!DOCTYPE HTML>
 <html>
@@ -41,7 +40,7 @@
     <div class="page-container">
         <div class="text-c">
             <select class="sel_select" id="ddlQuery">
-                <option value="ParameterName" selected>键名</option>
+                <option value="ParameterName">键名</option>
             </select>
             <input type="text" class="input-text" id="txtQuery" style="width:250px">
             <button type="button" onclick="loadView()" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i>搜索</button>
@@ -98,7 +97,7 @@
         pageobj.currentwhere = getstrWhere();
         $.ajax({
             type: 'POST',
-            url: "/SystemManage/GetConfigTableData",
+            url: "/SystemManage/GetParameterTableData",
             contentType: 'application/x-www-form-urlencoded;charset=utf-8',
             data: { jsonData: JSON.stringify(pageobj) },
             dataType: 'json',
@@ -124,7 +123,7 @@
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
                 type: 'POST',
-                url: "/SystemManage/DelConfigInfoData",
+                url: "/SystemManage/DelParameterInfoData",
                 contentType: 'application/x-www-form-urlencoded;charset=utf-8',
                 data: { id: id },
                 dataType: 'json',
@@ -161,7 +160,7 @@
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
                 type: 'POST',
-                url: "/SystemManage/DeleteConfigInfoData",
+                url: "/SystemManage/DeleteParameterInfoData",
                 contentType: 'application/x-www-form-urlencoded;charset=utf-8',
                 data: { idList: idList },
                 dataType: 'json',

@@ -12,7 +12,7 @@ CREATE TABLE dbo.SA_Role
 	RoleGUID	 VARCHAR(36) NOT NULL, --角色GUID
 	RoleName	 NVARCHAR(100) NOT NULL, --角色名称
 	RoleType     VARCHAR(20) NOT NULL, --角色类型：sa-超级管理员，other-其它
-	RoleNote	 NVARCHAR(200) NULL, --备注
+	Notes	 NVARCHAR(200) NULL, --备注
 	Create_Time	 DATETIME NOT NULL, --创建时间
 	CONSTRAINT PK_SA_Role PRIMARY KEY (RoleID)
 )

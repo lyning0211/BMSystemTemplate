@@ -1,12 +1,12 @@
 ﻿using BM.BLL.Common;
 using BM.BLL.Common.Common;
-using BM.DAL;
+using BM.BLL.Manage;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web.Mvc;
-using Web.Helper;
+using Web.App_Code;
 
 namespace Web.Controllers
 {
@@ -20,9 +20,9 @@ namespace Web.Controllers
         {
             LoginUserModel.LoginUser = null;
             //系统名称
-            string projectName = SystemManageDAL.GetParameterValueByName("project_name");
+            string projectName = SystemManageBLL.GetParameterValueByName("project_name");
             //公司名称
-            string companyName = SystemManageDAL.GetParameterValueByName("company_name");
+            string companyName = SystemManageBLL.GetParameterValueByName("company_name");
             ViewBag.ProjectName = projectName;
             ViewBag.CompanyName = companyName;
             ViewBag.Year = DateTime.Now.ToString("yyyy");
@@ -91,7 +91,7 @@ namespace Web.Controllers
         {
             string userGUID = cPublic.GetQueryString("UserGUID");
             string userName = "";
-            DataTable dt = ProjectInfoDAL.GetUserTable("userGUID='" + userGUID + "'", "");
+            DataTable dt = ProjectInfoBLL.GetUserTable("userGUID='" + userGUID + "'", "");
             if (dt != null && dt.Rows.Count > 0)
             {
                 userName = dt.Rows[0]["UserName"].ToString();
@@ -150,7 +150,7 @@ namespace Web.Controllers
 
                 string passWord = ExpandUtility.ToMD5(pDict["UserPWD"].ToString());
                 string myWhere = "UserName='" + pDict["UserName"].ToString() + "' AND UserPassWord='" + passWord + "'";
-                DataTable dtUser = ProjectInfoDAL.GetUserTable(myWhere, "");
+                DataTable dtUser = ProjectInfoBLL.GetUserTable(myWhere, "");
                 if (dtUser.Rows.Count > 0)
                 {
                     if (dtUser.Rows[0]["UserStatus"].ToString() != "0")
@@ -161,7 +161,7 @@ namespace Web.Controllers
                         return Json(message);
                     }
 
-                    DataTable dtRole = ProjectInfoDAL.GetRoleTable("RoleID='" + dtUser.Rows[0]["UserRoleID"].ToInt() + "'", "");
+                    DataTable dtRole = ProjectInfoBLL.GetRoleTable("RoleID='" + dtUser.Rows[0]["UserRoleID"].ToInt() + "'", "");
                     if (dtRole.Rows.Count <= 0)
                     {
                         message.Success = false;
@@ -171,8 +171,8 @@ namespace Web.Controllers
                     }
 
                     //将登录信息写入Session
-                    string projectName = SystemManageDAL.GetParameterValueByName("project_name");//系统名称
-                    string companyName = SystemManageDAL.GetParameterValueByName("company_name");//公司名称
+                    string projectName = SystemManageBLL.GetParameterValueByName("project_name");//系统名称
+                    string companyName = SystemManageBLL.GetParameterValueByName("company_name");//公司名称
                     LoginUserModel pUserMapInfo = new LoginUserModel
                     {
                         UserID = dtUser.Rows[0]["UserID"].ToInt(),
@@ -197,7 +197,7 @@ namespace Web.Controllers
                     logDict.Add("UserRoleName", dtUser.Rows[0]["RoleName"].ToString());
                     logDict.Add("Operation_IP", ip);
                     logDict.Add("Operation_Note", "后台登录");
-                    string strRes = LogInfoDAL.SaveLog_Login(logDict);
+                    string strRes = LogInfoBLL.SaveLog_Login(logDict);
                     #endregion
 
                     message.Success = true;
@@ -228,7 +228,7 @@ namespace Web.Controllers
             StringBuilder sbHtml = new StringBuilder();
             try
             {
-                DataTable dtRoles = ProjectInfoDAL.GetRoleTable("RoleType<>'sa'", "RoleName");
+                DataTable dtRoles = ProjectInfoBLL.GetRoleTable("RoleType<>'sa'", "RoleName");
                 sbHtml.Append("<option value=\"\"></option>");
                 if (dtRoles != null && dtRoles.Rows.Count > 0)
                 {
@@ -268,7 +268,7 @@ namespace Web.Controllers
                 pDict.Add("UserPassWordMD5", passWord);
 
                 //保存数据
-                string result = ProjectInfoDAL.RegisterUserInfoData(pDict);
+                string result = ProjectInfoBLL.RegisterUserInfoData(pDict);
                 if (result == "")
                 {
                     message.Success = true;
@@ -306,9 +306,9 @@ namespace Web.Controllers
             try
             {
                 //角色父级菜单
-                DataTable dtParentModule = ProjectInfoDAL.GetParentModule(userRoleGUID);
+                DataTable dtParentModule = ProjectInfoBLL.GetParentModule(userRoleGUID);
                 //角色子级菜单
-                DataTable dtChildModule = ProjectInfoDAL.GetChildModule(userRoleGUID);
+                DataTable dtChildModule = ProjectInfoBLL.GetChildModule(userRoleGUID);
 
                 for (int i = 0; i < dtParentModule.Rows.Count; i++)
                 {
@@ -345,7 +345,7 @@ namespace Web.Controllers
             {
                 Dictionary<string, object> pDict = JsonHelper.JSONToObject<Dictionary<string, object>>(jsonData);
                 //根据UserGUID获取用户信息
-                DataTable dtUser = ProjectInfoDAL.GetUserTable("UserGUID='" + pDict["UserGUID"] + "'", "");
+                DataTable dtUser = ProjectInfoBLL.GetUserTable("UserGUID='" + pDict["UserGUID"] + "'", "");
                 if (dtUser.Rows.Count <= 0)
                 {
                     message.Success = false;
@@ -373,7 +373,7 @@ namespace Web.Controllers
 
                     //获取缓存登录用户信息
                     pUserMapInfo = (LoginUserModel)Session["LoginUser"];
-                    string result = ProjectInfoDAL.UpdateUserPwd(dictData, pUserMapInfo);
+                    string result = ProjectInfoBLL.UpdateUserPwd(dictData, pUserMapInfo);
                     if (result == "")
                     {
                         message.Success = true;

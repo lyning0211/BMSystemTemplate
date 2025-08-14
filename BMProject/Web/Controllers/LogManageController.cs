@@ -1,12 +1,12 @@
 ﻿using BM.BLL.Common;
 using BM.BLL.Common.Common;
-using BM.DAL;
+using BM.BLL.Manage;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web.Mvc;
-using Web.Helper;
+using Web.App_Code;
 
 namespace Web.Controllers
 {
@@ -63,7 +63,7 @@ namespace Web.Controllers
 
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Operation_Time DESC";
-                DataTable dt = LogInfoDAL.GetLogLoginTable(int.Parse(pDict["currentpageindex"].ToString()) - 1,
+                DataTable dt = LogInfoBLL.GetLogLoginTable(int.Parse(pDict["currentpageindex"].ToString()) - 1,
                                                         int.Parse(pDict["pagesize"].ToString()), "*", myWhere, orderBy);
                 if (dt.Rows.Count == 0)
                 {
@@ -107,7 +107,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = BuildWhereData(jsonWhere);
-                int recordCount = CommonDAL.GetRecordCount("Log_Login_v", myWhere);
+                int recordCount = CommonBLL.GetRecordCount("Log_Login_v", myWhere);
 
                 message.Success = true;
                 message.ReturnString = recordCount.ToString();
@@ -149,7 +149,7 @@ namespace Web.Controllers
 
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Operation_Time DESC";
-                DataTable dt = LogInfoDAL.GetLogOperationTable(pDict["currentpageindex"].ToString().ToInt() - 1, pDict["pagesize"].ToInt(), "*", myWhere, orderBy);
+                DataTable dt = LogInfoBLL.GetLogOperationTable(pDict["currentpageindex"].ToString().ToInt() - 1, pDict["pagesize"].ToInt(), "*", myWhere, orderBy);
                 if (dt.Rows.Count == 0)
                 {
                     sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");
@@ -194,7 +194,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = BuildWhereData(jsonWhere);
-                int recordCount = CommonDAL.GetRecordCount("Log_Operation_v", myWhere);
+                int recordCount = CommonBLL.GetRecordCount("Log_Operation_v", myWhere);
 
                 message.Success = true;
                 message.ReturnString = recordCount.ToString();
@@ -239,7 +239,7 @@ namespace Web.Controllers
 
                 string myWhere = BuildWhereData(pDict["currentwhere"].ToString());
                 string orderBy = "Operation_Time DESC";
-                DataTable dt = LogInfoDAL.GetLogTraceTable(pDict["currentpageindex"].ToString().ToInt() - 1, pDict["pagesize"].ToInt(), "*", myWhere, orderBy);
+                DataTable dt = LogInfoBLL.GetLogTraceTable(pDict["currentpageindex"].ToString().ToInt() - 1, pDict["pagesize"].ToInt(), "*", myWhere, orderBy);
                 if (dt.Rows.Count == 0)
                 {
                     sbHtml.Append("<tr><td colspan=\"15\" style=\"text-align:center\"><h5>没有数据...</h5></td></tr>");
@@ -287,7 +287,7 @@ namespace Web.Controllers
             try
             {
                 string myWhere = BuildWhereData(jsonWhere);
-                int recordCount = CommonDAL.GetRecordCount("Log_Trace_v", myWhere);
+                int recordCount = CommonBLL.GetRecordCount("Log_Trace_v", myWhere);
 
                 message.Success = true;
                 message.ReturnString = recordCount.ToString();

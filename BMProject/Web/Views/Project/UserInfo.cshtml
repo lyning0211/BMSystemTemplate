@@ -34,7 +34,7 @@
 <body>
     <div class="page-container">
         <form id="form1" class="form form-horizontal" method="post">
-            <div class="row cl">
+            <div class="row cl" id="prompt">
                 <label class="form-label col-xs-4 col-sm-2"></label>
                 <div class="formControls col-xs-8 col-sm-9">
                     <span style="color:red;">新添加用户默认密码为123456，请及时登录并修改密码！</span>
@@ -63,7 +63,7 @@
                 <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>角色：</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     <span class="select-box">
-                        <select id="UserRole" name="UserRoleID" class="select">
+                        <select id="selUserRole" name="UserRoleID" class="select">
                         </select>
                     </span>
                 </div>
@@ -119,6 +119,9 @@
     var guid = "";
     $(function () {
         guid = getQueryString("UserGUID");
+        if (guid != "") {
+            $("#prompt").remove();
+        }
         bindUserRole();
         loadData();
     });
@@ -178,7 +181,7 @@
             layer.alert('请输入用户名', { icon: 2 })
             return false;
         }
-        var userRole = $("#UserRole").val();
+        var userRole = $("#selUserRole").val();
         if (userRole.trim() == "") {
             layer.alert('请选择角色', { icon: 2 })
             return false;

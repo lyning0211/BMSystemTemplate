@@ -91,9 +91,9 @@
         if (guid != "") {
             $.ajax({
                 type: "POST",
-                url: "/SystemManage/GetConfigInfoData",
+                url: "/SystemManage/GetParameterInfoData",
                 contentType: 'application/x-www-form-urlencoded;charset=utf-8',
-                data: { guid: guid },
+                data: { parameterName: guid },
                 dataType: "json",
                 success: function (data) {
                     if (data.Success == true) {
@@ -126,7 +126,7 @@
         var ele = getAllDataByName("form1");
         $.ajax({
             type: "POST",
-            url: "/SystemManage/SaveConfigInfoData",
+            url: "/SystemManage/SaveParameterInfoData",
             contentType: 'application/x-www-form-urlencoded;charset=utf-8',
             data: { jsonData: JSON.stringify(ele) },
             dataType: "json",
