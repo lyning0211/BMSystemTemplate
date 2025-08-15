@@ -133,7 +133,7 @@ namespace BM.BLL.Manage
         /// </summary>
         /// <param name="dictData"></param>
         /// <returns></returns>
-        public static string SaveLog_Login(Dictionary<string, string> dictData)
+        public static string SaveLog_Login(Dictionary<string, object> dictData)
         {
             string strRes = "";
             StringBuilder sqlStr = new StringBuilder();
@@ -141,7 +141,7 @@ namespace BM.BLL.Manage
             {
                 string mydate = CommonDAL.ReadCurrDate();
                 sqlStr.AppendFormat("INSERT INTO dbo.Log_Login (UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_IP,Operation_Note) VALUES (@UserID,@UserName,@UserRoleID,@UserRoleName,'" + mydate + "',@Operation_IP,@Operation_Note);");
-                CommonDAL.ExecuteNonQuery(sqlStr.ToString());
+                CommonDAL.ExecuteNonQuery(sqlStr.ToString(), CommonBLL.DictionaryToParameters(dictData));
             }
             catch (Exception ex)
             {
@@ -155,7 +155,7 @@ namespace BM.BLL.Manage
         /// </summary>
         /// <param name="dictData"></param>
         /// <returns></returns>
-        public static string SaveLog_Operation(Dictionary<string, string> dictData)
+        public static string SaveLog_Operation(Dictionary<string, object> dictData)
         {
             string strRes = "";
             StringBuilder sqlStr = new StringBuilder();
@@ -163,7 +163,7 @@ namespace BM.BLL.Manage
             {
                 string mydate = CommonDAL.ReadCurrDate();
                 sqlStr.AppendFormat("INSERT INTO dbo.Log_Operation (Object_Name,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES (@Object_Name,@UserID,@UserName,@UserRoleID,@UserRoleName,'" + mydate + "',@Operation_Type,@Operation_IP,@Operation_Note);");
-                CommonDAL.ExecuteNonQuery(sqlStr.ToString());
+                CommonDAL.ExecuteNonQuery(sqlStr.ToString(), CommonBLL.DictionaryToParameters(dictData));
             }
             catch (Exception ex)
             {
@@ -177,7 +177,7 @@ namespace BM.BLL.Manage
         /// </summary>
         /// <param name="dictData"></param>
         /// <returns></returns>
-        public static string SaveLog_Trace(Dictionary<string, string> dictData)
+        public static string SaveLog_Trace(Dictionary<string, object> dictData)
         {
             string strRes = "";
             StringBuilder sqlStr = new StringBuilder();
@@ -185,7 +185,7 @@ namespace BM.BLL.Manage
             {
                 string mydate = CommonDAL.ReadCurrDate();
                 sqlStr.AppendFormat("INSERT INTO dbo.Log_Trace (Object_Type,Object_GUID,Object_Name,Object_Field,Old_Value,New_Value,UserID,UserName,UserRoleID,UserRoleName,Operation_Time,Operation_Type,Operation_IP,Operation_Note) VALUES (@Object_Type,@Object_GUID,@Object_Name,@Object_Field,@Old_Value,@New_Value,@UserID,@UserName,@UserRoleID,@UserRoleName,'" + mydate + "',@Operation_Type,@Operation_IP,@Operation_Note);");
-                CommonDAL.ExecuteNonQuery(sqlStr.ToString());
+                CommonDAL.ExecuteNonQuery(sqlStr.ToString(), CommonBLL.DictionaryToParameters(dictData));
             }
             catch (Exception ex)
             {

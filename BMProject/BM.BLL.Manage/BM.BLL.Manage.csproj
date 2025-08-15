@@ -45,9 +45,7 @@
     <Compile Include="LogInfoBLL.cs" />
     <Compile Include="ProjectInfoBLL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StoreroomManageBLL.cs" />
     <Compile Include="SystemManageBLL.cs" />
-    <Compile Include="UserManageBLL.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BM.BLL.Common\BM.BLL.Common.csproj">

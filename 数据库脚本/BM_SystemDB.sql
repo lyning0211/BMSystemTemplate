@@ -17,7 +17,7 @@ CREATE TABLE dbo.SA_Role
 	CONSTRAINT PK_SA_Role PRIMARY KEY (RoleID)
 )
 GO
-INSERT INTO dbo.SA_Role(RoleGUID,RoleName,RoleType,RoleNote,Create_Time) VALUES (NEWID(), '超级管理员', 'sa', '系统默认添加账号，拥有所有权限',GETDATE());
+INSERT INTO dbo.SA_Role(RoleGUID,RoleName,RoleType,Notes,Create_Time) VALUES (NEWID(), '超级管理员', 'sa', '系统默认添加账号，拥有所有权限',GETDATE());
 GO
 --设置唯一键
 ALTER TABLE dbo.SA_Role ADD CONSTRAINT UQ_SA_Role UNIQUE (RoleName);

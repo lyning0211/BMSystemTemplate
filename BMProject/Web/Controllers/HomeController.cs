@@ -190,7 +190,7 @@ namespace Web.Controllers
                     LoginUserModel.LoginUser = pUserMapInfo;
 
                     #region 添加登录日志
-                    Dictionary<string, string> logDict = new Dictionary<string, string>();
+                    Dictionary<string, object> logDict = new Dictionary<string, object>();
                     logDict.Add("UserID", dtUser.Rows[0]["UserID"].ToString());
                     logDict.Add("UserName", dtUser.Rows[0]["UserName"].ToString());
                     logDict.Add("UserRoleID", dtUser.Rows[0]["UserRoleID"].ToString());
